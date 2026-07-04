@@ -1,0 +1,271 @@
+{
+  "band": "the-basics",
+  "title": "The Basics",
+  "nodes": [
+    {
+      "id": "board-orientation",
+      "title": "The Board",
+      "objective": "Name any square: files a–h, ranks 1–8, and how the board is oriented.",
+      "prereqs": [],
+      "status": "active",
+      "mastery": { "type": "n-correct-of-m", "n": 4, "m": 5 },
+      "teaches": { "kinds": ["find-square"] },
+      "exercises": ["fs-e4", "fs-a1", "fs-h8", "fs-c6", "fs-f2"],
+      "assessment": "fs-check-g5"
+    },
+    {
+      "id": "rook-movement",
+      "title": "The Rook: Straight Lines",
+      "objective": "Move a rook in straight lines; recognize that pieces block its path.",
+      "prereqs": ["board-orientation"],
+      "status": "active",
+      "mastery": { "type": "n-correct-of-m", "n": 2, "m": 3 },
+      "teaches": { "kinds": ["scenario"], "pieces": ["R"], "goalTypes": ["reach-square"] },
+      "exercises": ["rook-race-01", "rook-race-02", "rook-race-03"],
+      "assessment": "rook-race-check"
+    },
+    {
+      "id": "rook-capture",
+      "title": "The Rook: Capturing",
+      "objective": "Capture with the rook; plan an efficient route through several targets.",
+      "prereqs": ["rook-movement"],
+      "status": "active",
+      "mastery": { "type": "n-correct-of-m", "n": 2, "m": 3 },
+      "teaches": { "kinds": ["scenario"], "pieces": ["R"], "goalTypes": ["capture-all"] },
+      "exercises": ["rook-gobble-01", "rook-gobble-02", "rook-gobble-03"],
+      "assessment": "rook-gobble-check"
+    },
+    {
+      "id": "bishop-movement",
+      "title": "The Bishop: Diagonals",
+      "objective": "Move a bishop along diagonals; one bishop lives on one color forever.",
+      "prereqs": ["board-orientation"],
+      "status": "stub",
+      "mastery": { "type": "n-correct-of-m", "n": 2, "m": 3 },
+      "teaches": { "kinds": ["scenario"], "pieces": ["B"], "goalTypes": ["reach-square"] },
+      "exercises": []
+    },
+    {
+      "id": "bishop-capture",
+      "title": "The Bishop: Capturing",
+      "objective": "Capture with the bishop across the diagonals.",
+      "prereqs": ["bishop-movement"],
+      "status": "stub",
+      "mastery": { "type": "n-correct-of-m", "n": 2, "m": 3 },
+      "teaches": { "kinds": ["scenario"], "pieces": ["B"], "goalTypes": ["capture-all"] },
+      "exercises": []
+    },
+    {
+      "id": "knight-movement",
+      "title": "The Knight",
+      "objective": "Make the knight's L-shaped jump; the only piece that leaps over others.",
+      "prereqs": ["board-orientation"],
+      "status": "stub",
+      "mastery": { "type": "n-correct-of-m", "n": 2, "m": 3 },
+      "teaches": { "kinds": ["scenario"], "pieces": ["N"], "goalTypes": ["reach-square", "capture-all"] },
+      "exercises": []
+    },
+    {
+      "id": "king-movement",
+      "title": "The King",
+      "objective": "Move the king one square in any direction.",
+      "prereqs": ["board-orientation"],
+      "status": "stub",
+      "mastery": { "type": "n-correct-of-m", "n": 2, "m": 3 },
+      "teaches": { "kinds": ["scenario"], "pieces": ["K"], "goalTypes": ["reach-square"] },
+      "exercises": []
+    },
+    {
+      "id": "pawn-move-and-capture",
+      "title": "The Pawn",
+      "objective": "Push pawns forward; capture diagonally; promote on the last rank.",
+      "prereqs": ["board-orientation"],
+      "status": "stub",
+      "mastery": { "type": "n-correct-of-m", "n": 3, "m": 4 },
+      "teaches": { "kinds": ["scenario"], "pieces": ["P"], "goalTypes": ["reach-square", "capture-all"] },
+      "exercises": []
+    },
+    {
+      "id": "queen-movement",
+      "title": "The Queen",
+      "objective": "The queen combines rook lines and bishop diagonals.",
+      "prereqs": ["rook-capture", "bishop-capture"],
+      "status": "stub",
+      "mastery": { "type": "n-correct-of-m", "n": 2, "m": 3 },
+      "teaches": { "kinds": ["scenario"], "pieces": ["Q"], "goalTypes": ["reach-square", "capture-all"] },
+      "exercises": []
+    },
+    {
+      "id": "piece-values-dont-hang",
+      "title": "Piece Values: Don't Hang Pieces",
+      "objective": "Know what each piece is worth and stop leaving pieces where they can be taken.",
+      "prereqs": ["rook-capture", "bishop-capture"],
+      "status": "stub",
+      "mastery": { "type": "n-correct-of-m", "n": 3, "m": 4 },
+      "teaches": { "kinds": ["scenario"] },
+      "exercises": []
+    },
+    {
+      "id": "check-and-escaping-check",
+      "title": "Check & Escaping Check",
+      "objective": "Recognize check and the three ways out: move, block, capture.",
+      "prereqs": ["queen-movement"],
+      "status": "stub",
+      "mastery": { "type": "n-correct-of-m", "n": 3, "m": 4 },
+      "teaches": { "kinds": ["scenario"] },
+      "exercises": []
+    },
+    {
+      "id": "basic-mates",
+      "title": "Basic Checkmates",
+      "objective": "Deliver the simplest mates: back rank, king-and-queen, king-and-rook.",
+      "prereqs": ["check-and-escaping-check"],
+      "status": "stub",
+      "mastery": { "type": "n-correct-of-m", "n": 3, "m": 4 },
+      "teaches": { "kinds": ["scenario"] },
+      "exercises": []
+    }
+  ],
+  "exercises": [
+    {
+      "kind": "find-square",
+      "id": "fs-e4",
+      "prompt": "Files run a–h from left to right, ranks 1–8 from bottom to top. Click the square e4.",
+      "square": "e4"
+    },
+    {
+      "kind": "find-square",
+      "id": "fs-a1",
+      "prompt": "The bottom-left corner is where file a meets rank 1. Click a1.",
+      "square": "a1"
+    },
+    {
+      "kind": "find-square",
+      "id": "fs-h8",
+      "prompt": "The top-right corner: file h, rank 8. Click h8.",
+      "square": "h8"
+    },
+    {
+      "kind": "find-square",
+      "id": "fs-c6",
+      "prompt": "Click the square c6.",
+      "square": "c6"
+    },
+    {
+      "kind": "find-square",
+      "id": "fs-f2",
+      "prompt": "Click the square f2.",
+      "square": "f2"
+    },
+    {
+      "kind": "find-square",
+      "id": "fs-check-g5",
+      "prompt": "Checkpoint: click the square g5.",
+      "square": "g5"
+    },
+    {
+      "kind": "scenario",
+      "id": "rook-race-01",
+      "prompt": "The rook slides any distance along a rank or file. Get it to the starred square in 2 moves.",
+      "scenario": {
+        "id": "rook-race-01",
+        "startFEN": "8/8/8/8/8/8/8/R7 w - - 0 1",
+        "allowed": { "pieces": ["R"], "moves": "rook-lines", "castling": false },
+        "goal": { "type": "reach-square", "square": "h8", "piece": "R" },
+        "opponent": "none",
+        "movesBudget": 2
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "rook-race-02",
+      "prompt": "Your own pawn is in the way — rooks can't jump. Find a route to the star in 3 moves.",
+      "scenario": {
+        "id": "rook-race-02",
+        "startFEN": "8/8/8/8/8/8/P7/R7 w - - 0 1",
+        "allowed": { "pieces": ["R"], "moves": "rook-lines", "castling": false },
+        "goal": { "type": "reach-square", "square": "a8", "piece": "R" },
+        "opponent": "none",
+        "movesBudget": 3
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "rook-race-03",
+      "prompt": "Two pawns block the direct roads. Reach the star in 3 moves.",
+      "scenario": {
+        "id": "rook-race-03",
+        "startFEN": "8/8/3P4/8/3R2P1/8/8/8 w - - 0 1",
+        "allowed": { "pieces": ["R"], "moves": "rook-lines", "castling": false },
+        "goal": { "type": "reach-square", "square": "g7", "piece": "R" },
+        "opponent": "none",
+        "movesBudget": 3
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "rook-race-check",
+      "prompt": "Checkpoint: reach the starred square in 2 moves.",
+      "scenario": {
+        "id": "rook-race-check",
+        "startFEN": "8/8/8/8/8/2R5/8/8 w - - 0 1",
+        "allowed": { "pieces": ["R"], "moves": "rook-lines", "castling": false },
+        "goal": { "type": "reach-square", "square": "f6", "piece": "R" },
+        "opponent": "none",
+        "movesBudget": 2
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "rook-gobble-01",
+      "prompt": "Gobble! Capture every black pawn. Land exactly on a pawn's square to take it.",
+      "scenario": {
+        "id": "rook-gobble-01",
+        "startFEN": "8/2p5/8/4p3/8/1p6/8/R7 w - - 0 1",
+        "allowed": { "pieces": ["R"], "moves": "rook-lines", "castling": false },
+        "goal": { "type": "capture-all", "targets": "p" },
+        "opponent": "none",
+        "movesBudget": null
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "rook-gobble-02",
+      "prompt": "Five pawns this time. Capture them all — plan your route.",
+      "scenario": {
+        "id": "rook-gobble-02",
+        "startFEN": "6p1/1p6/8/5p2/2p5/7p/8/4R3 w - - 0 1",
+        "allowed": { "pieces": ["R"], "moves": "rook-lines", "castling": false },
+        "goal": { "type": "capture-all", "targets": "p" },
+        "opponent": "none",
+        "movesBudget": null
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "rook-gobble-03",
+      "prompt": "Efficiency round: four pawns, four moves. One capture per move!",
+      "scenario": {
+        "id": "rook-gobble-03",
+        "startFEN": "8/p1p1p1p1/8/8/8/8/8/R7 w - - 0 1",
+        "allowed": { "pieces": ["R"], "moves": "rook-lines", "castling": false },
+        "goal": { "type": "capture-all", "targets": "p" },
+        "opponent": "none",
+        "movesBudget": 4
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "rook-gobble-check",
+      "prompt": "Checkpoint: capture all four pawns.",
+      "scenario": {
+        "id": "rook-gobble-check",
+        "startFEN": "8/8/1p3p2/8/8/2p2p2/8/4R3 w - - 0 1",
+        "allowed": { "pieces": ["R"], "moves": "rook-lines", "castling": false },
+        "goal": { "type": "capture-all", "targets": "p" },
+        "opponent": "none",
+        "movesBudget": null
+      }
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "name": "@chess/web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Play surface: the browser lesson experience, driven entirely by the truth core.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "e2e": "playwright test"
+  },
+  "dependencies": {
+    "@chess/core": "workspace:*",
+    "@chess/curriculum": "workspace:*",
+    "@chess/verifier": "workspace:*"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.1",
+    "vite": "^5.4.0"
+  }
+}

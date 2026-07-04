@@ -1,0 +1,15 @@
+{
+  "name": "@chess/verifier",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Generate-then-verify gate: proves exercises solvable and on-target by search over the truth core before a learner ever sees them.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "types": "./src/index.ts",
+  "dependencies": {
+    "@chess/core": "workspace:*",
+    "@chess/curriculum": "workspace:*"
+  }
+}

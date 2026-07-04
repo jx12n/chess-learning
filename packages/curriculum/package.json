@@ -1,0 +1,14 @@
+{
+  "name": "@chess/curriculum",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Curriculum as data: skill graph, exercises, outer tutoring loop, learner-model stub.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "types": "./src/index.ts",
+  "dependencies": {
+    "@chess/core": "workspace:*"
+  }
+}

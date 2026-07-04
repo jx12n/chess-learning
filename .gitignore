@@ -1,0 +1,17 @@
+# Rust
+target/
+
+# Generated WASM artifact (rebuild with `pnpm build:wasm`)
+packages/core/wasm/
+
+# Node
+node_modules/
+dist/
+
+# Playwright
+playwright-report/
+test-results/
+
+# Editor/OS noise
+.DS_Store
+*.log

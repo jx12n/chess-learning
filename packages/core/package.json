@@ -1,0 +1,11 @@
+{
+  "name": "@chess/core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Typed TS wrapper over the Rust truth core (WASM). The only source of truth about chess.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "types": "./src/index.ts"
+}

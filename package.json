@@ -1,0 +1,23 @@
+{
+  "name": "chess-tutor",
+  "private": true,
+  "type": "module",
+  "description": "Generative chess teaching framework — Day 1 foundation: truth core (Rust→WASM), constraint layer, curriculum, verifier, play surface. Zero LLM.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build:wasm": "cd crates/truth-core && wasm-pack build --target web --release --out-dir ../../packages/core/wasm --out-name truth_core",
+    "test:rust": "cargo test --manifest-path crates/truth-core/Cargo.toml",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "verify:curriculum": "vitest run --root . packages/verifier/test/verify-curriculum.test.ts",
+    "dev": "pnpm --filter @chess/web dev",
+    "build": "pnpm --filter @chess/web build"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  }
+}
