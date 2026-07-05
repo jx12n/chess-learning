@@ -46,8 +46,13 @@ export interface BoardDecorations {
   goal?: string | null;
   /** The two squares of the last move. */
   lastMove?: [string, string] | null;
-  /** One-shot flash: correct (green) / wrong (red). */
-  flash?: { square: string; kind: 'good' | 'bad' } | null;
+  /**
+   * One-shot flash. `good` (green) celebrates a correct move; `hint`
+   * (gentle amber) points somewhere — the square you were looking for, or
+   * a spot that won't work — and is never a red "wrong" buzz. A miss is
+   * never punished; see CLAUDE.md.
+   */
+  flash?: { square: string; kind: 'good' | 'hint' } | null;
 }
 
 export class BoardView {
@@ -104,14 +109,14 @@ export class BoardView {
         'last-move',
         !!deco.lastMove && (deco.lastMove[0] === name || deco.lastMove[1] === name),
       );
-      el.classList.remove('flash-good', 'flash-bad');
+      el.classList.remove('flash-good', 'flash-hint');
     }
     if (deco.flash) {
       const el = this.squares.get(deco.flash.square);
       if (el) {
         // Retrigger the CSS animation.
         void el.offsetWidth;
-        el.classList.add(deco.flash.kind === 'good' ? 'flash-good' : 'flash-bad');
+        el.classList.add(deco.flash.kind === 'good' ? 'flash-good' : 'flash-hint');
       }
     }
   }

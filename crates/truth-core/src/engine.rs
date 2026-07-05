@@ -9,7 +9,7 @@ use shakmaty::{
     fen::Fen,
     san::SanPlus,
     uci::UciMove,
-    CastlingMode, Chess, Color, EnPassantMode, Move, Position, Role, Square,
+    CastlingMode, CastlingSide, Chess, Color, EnPassantMode, Move, Position, Role, Square,
 };
 
 /// Parse a FEN into a standard-chess position (strict validation).
@@ -52,11 +52,28 @@ pub fn piece_letter(role: Role, color: Color) -> String {
 }
 
 pub fn move_info(pos: &Chess, m: &Move) -> MoveInfo {
+    // Shakmaty encodes a castle's `to()` as the ROOK's home square (its
+    // internal convention). The wire contract is "the square the moving
+    // piece lands on / the square the learner clicks", so castles report
+    // the KING's destination — g1/c1 (g8/c8) — matching the e1g1-style
+    // UCI. Without this, the click affordance (h1) contradicts the D2
+    // castling goal (reach-square g1).
+    let to = match m {
+        Move::Castle { king, rook } => {
+            let side = if rook.file() > king.file() {
+                CastlingSide::KingSide
+            } else {
+                CastlingSide::QueenSide
+            };
+            Square::from_coords(side.king_to_file(), king.rank())
+        }
+        _ => m.to(),
+    };
     MoveInfo {
         uci: m.to_uci(CastlingMode::Standard).to_string(),
         san: SanPlus::from_move(pos.clone(), m).to_string(),
         from: m.from().map(|s| s.to_string()),
-        to: m.to().to_string(),
+        to: to.to_string(),
         piece: piece_letter(m.role(), pos.turn()),
         capture: m.is_capture(),
         castle: m.is_castle(),

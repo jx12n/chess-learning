@@ -54,6 +54,41 @@ Two users hold standing veto and appear on no masthead:
 content decisions, Fiekas leads core discipline. Anderson's lens takes
 over when the agent layer opens.
 
+## The shape of the journey — a spiral, not a ladder
+
+The Basics' seven days are the first lap, not the product. The
+curriculum is a **spiral**: a handful of strands — board vision, piece
+play, value, teamwork, king safety, and later tactics, endgames, whole
+games — that each come back around at greater depth, year after year.
+In the data this stays a DAG: strands recur, nodes never do. Every node
+carries a `strand` tag, and a band is one lap across the strands at one
+depth.
+
+Two consequences we build toward deliberately:
+
+- **Branch points, not a single file line.** The DAG already holds many
+  nodes open at once (master the board and five pieces unlock). The
+  router exposes that whole *frontier*; serving order is a policy on
+  top — the Basics walks it linearly, later bands can offer the
+  frontier as a menu, and the agent layer picks from the same set.
+- **Forever-modes, not a finish line.** Some points on the spiral open
+  activities that never close: daily tactics volume (Gobet's pattern
+  engine), endgame technique, whole games against a human-like
+  opponent, reviewing your own games. "Graduating" a strand means
+  unlocking one of these engines, not ending it. And mastered skills
+  are resurfaced as they fade — the retention model's job (the BKT
+  seam), which is why practice attempts are timestamped now, years
+  before the model that reads them.
+
+- **The learner's ceiling, not the product's.** Stop after the Basics —
+  that's a complete, satisfying arc on its own. Keep climbing toward
+  1500, 2000, 2800 — the spiral keeps deepening (sharper tactics
+  volume, real endgame technique, tougher human-like opposition, finer
+  feedback) for as long as the learner wants to go. How far this goes
+  is the learner's decision, never a cap the product designs in.
+
+A band completing is a celebration and a doorway, never an ending.
+
 ## The road
 
 1. **The Basics band** (now) — author the remaining piece nodes under
@@ -84,3 +119,5 @@ over when the agent layer opens.
   exceptions since Day 1.
 - The agent layer lands as a new client of existing seams, not a
   rewrite.
+- Years in, there is always a worthwhile next thing — and an old skill
+  comes back to visit right before it would fade.

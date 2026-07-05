@@ -16,10 +16,12 @@ import initWasm, {
   core_version,
   evaluate,
   game_result,
+  greedy_move,
   legal_moves,
   perft_count,
   scenario_apply,
   scenario_legal_moves,
+  scenario_opponent_move,
   scenario_result,
 } from '../wasm/truth_core.js';
 
@@ -29,7 +31,9 @@ import type {
   GameResult,
   Goal,
   MoveInfo,
+  OpponentReply,
   Scenario,
+  ScenarioFailureReason,
   ScenarioResult,
 } from './types.js';
 
@@ -39,7 +43,9 @@ export type {
   GameResult,
   Goal,
   MoveInfo,
+  OpponentReply,
   Scenario,
+  ScenarioFailureReason,
   ScenarioResult,
 };
 
@@ -76,6 +82,17 @@ export interface TruthCore {
   scenarioApply(scenario: Scenario, fen: string, uci: string): string;
   /** Scenario status: ongoing / goal-met / failed (+moves used/left). */
   scenarioResult(scenario: Scenario, fen: string): ScenarioResult;
+  /**
+   * The scenario opponent's deterministic reply, applied (D3 greedy).
+   * Errors when the scenario has no opponent or it is the learner's turn.
+   */
+  scenarioOpponentMove(scenario: Scenario, fen: string): OpponentReply;
+  /**
+   * The greedy opponent's reply in a FULL standard game (day 13's Pip) —
+   * same policy as `opponent: "greedy"`. `move` is null when the game
+   * is already over.
+   */
+  greedyMove(fen: string): OpponentReply;
   /** Core crate version, for cross-boundary sanity checks. */
   version(): string;
 }
@@ -93,6 +110,9 @@ const api: TruthCore = {
     unwrap<string>(scenario_apply(JSON.stringify(scenario), fen, uci)),
   scenarioResult: (scenario, fen) =>
     unwrap<ScenarioResult>(scenario_result(JSON.stringify(scenario), fen)),
+  scenarioOpponentMove: (scenario, fen) =>
+    unwrap<OpponentReply>(scenario_opponent_move(JSON.stringify(scenario), fen)),
+  greedyMove: (fen) => unwrap<OpponentReply>(greedy_move(fen)),
   version: () => core_version(),
 };
 

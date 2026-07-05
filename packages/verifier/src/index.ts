@@ -44,11 +44,40 @@ export interface VerifyOptions {
 
 const SQUARE_RE = /^[a-h][1-8]$/;
 
+/** Opponents the game kind can gate on today — grows with the core. */
+const SUPPORTED_GAME_OPPONENTS: ReadonlySet<string> = new Set(['greedy']);
+
 /** Board-state key: FEN minus the move counters. In an opponentless
  * mini-game the remaining fields fully determine the future, so BFS may
- * dedupe on them across depths (first visit is via a shortest path). */
-function stateKey(fen: string): string {
-  return fen.split(' ').slice(0, 4).join(' ');
+ * dedupe on them across depths (first visit is via a shortest path).
+ * For goals whose truth depends on moves-used (survive), the BFS depth
+ * joins the key — taken from the walk itself, never from the FEN's
+ * counters (those belong to the core's budget clock and may change out
+ * from under us): the same placement at a different depth is a genuinely
+ * different state there — surviving N moves from a later re-visit needs
+ * fewer safe moves than from the first — and cross-depth dedup would
+ * wrongly prune the deeper path. */
+function stateKey(fen: string, depth: number | null): string {
+  const base = fen.split(' ').slice(0, 4).join(' ');
+  return depth === null ? base : `${depth}|${base}`;
+}
+
+/** Goals whose success predicate reads moves-used, not just the board. */
+function goalDependsOnDepth(scenario: Scenario): boolean {
+  return scenario.goal.type === 'survive';
+}
+
+/** The all-false report every refusal branch shares. */
+function refusal(onTarget: boolean, reason: string): VerifyReport {
+  return {
+    valid: false,
+    solvable: false,
+    minSolutionLength: null,
+    solutions: [],
+    unique: false,
+    onTarget,
+    reason,
+  };
 }
 
 interface SearchOutcome {
@@ -67,6 +96,15 @@ async function searchScenario(
   const maxSolutions = opts.maxSolutions ?? 8;
   const budget = scenario.movesBudget ?? null;
   const depthCap = budget ?? opts.maxDepth ?? 16;
+  // Only a DETERMINISTIC opponent folds into a single-agent BFS: its
+  // reply is a function of the position (D3), so the search never
+  // branches on the enemy. 'greedy' qualifies by construction; a future
+  // 'engine' (Maia-style, stochastic) must NOT fold — that day needs
+  // adversarial search in the core (finding F4) — and this guard is
+  // where the assumption lives. ('engine' cannot actually reach here
+  // today: the core rejects it on the first scenarioLegalMoves call.)
+  const foldableOpponent = scenario.opponent === 'greedy';
+  const depthKeyed = goalDependsOnDepth(scenario);
 
   // Already solved at the start position? (Degenerate but well-defined.)
   const startResult = core.scenarioResult(scenario, scenario.startFEN);
@@ -88,7 +126,7 @@ async function searchScenario(
     pathCount: number;
   }
 
-  const startKey = stateKey(scenario.startFEN);
+  const startKey = stateKey(scenario.startFEN, depthKeyed ? 0 : null);
   const info = new Map<string, NodeInfo>();
   info.set(startKey, {
     fen: scenario.startFEN,
@@ -109,8 +147,20 @@ async function searchScenario(
       const node = info.get(key)!;
       const moves = core.scenarioLegalMoves(scenario, node.fen);
       for (const m of moves) {
-        const childFen = core.scenarioApply(scenario, node.fen, m.uci);
-        const childKey = stateKey(childFen);
+        let childFen = core.scenarioApply(scenario, node.fen, m.uci);
+        let status = core.scenarioResult(scenario, childFen).status;
+        // Fold the deterministic reply into this edge. Survive judges
+        // only after the answer, so the result is re-read; a reply of
+        // null (no legal move) still lands a valid FEN to continue from.
+        if (status === 'ongoing' && foldableOpponent) {
+          childFen = core.scenarioOpponentMove(scenario, childFen).fen;
+          status = core.scenarioResult(scenario, childFen).status;
+        }
+        if (status === 'failed') {
+          continue; // dead branch: budget-safe (depth caps the walk),
+          //           piece lost (survive), or the position is over
+        }
+        const childKey = stateKey(childFen, depthKeyed ? depth : null);
         if (visited.has(childKey) && !discoveredThisLevel.has(childKey)) {
           continue; // reached earlier via a shorter path
         }
@@ -127,7 +177,7 @@ async function searchScenario(
           pathCount: node.pathCount,
         });
         nextFrontier.push(childKey);
-        if (core.scenarioResult(scenario, childFen).status === 'goal-met') {
+        if (status === 'goal-met') {
           goalKeys.push(childKey);
         }
       }
@@ -154,12 +204,18 @@ async function searchScenario(
       };
     }
     if (nextFrontier.length === 0) {
+      // With a budget, exhaustion at any depth means no solution fits
+      // it (budget-dead branches are pruned above, so the frontier can
+      // dry up before the loop's own cap is reached).
       return {
         solvable: false,
         minSolutionLength: null,
         solutions: [],
         unique: false,
-        reason: 'search space exhausted without reaching the goal',
+        reason:
+          budget !== null
+            ? `no solution within the moves budget of ${budget}`
+            : 'search space exhausted without reaching the goal',
       };
     }
     frontier = nextFrontier;
@@ -213,16 +269,91 @@ export async function verifyExercise(
   };
 
   if (ex.kind === 'find-square') {
-    const valid = SQUARE_RE.test(ex.square);
-    return {
-      valid,
-      solvable: valid,
-      minSolutionLength: valid ? 1 : null,
-      solutions: valid ? [[ex.square]] : [],
-      unique: true,
-      ...base,
-      ...(valid ? {} : { reason: `'${ex.square}' is not a square` }),
-    };
+    if (!SQUARE_RE.test(ex.square)) {
+      return refusal(base.onTarget, `'${ex.square}' is not a square`);
+    }
+    if (ex.fen === undefined) {
+      // Bare board-orientation click: the square itself is the answer.
+      return {
+        valid: true,
+        solvable: true,
+        minSolutionLength: 1,
+        solutions: [[ex.square]],
+        unique: true,
+        ...base,
+      };
+    }
+    // Danger-spotting (D6): the FEN is authored ENEMY-to-move, and the
+    // answer square must hold a piece that enemy can capture — proven
+    // against core-generated captures, never trusted from data. The
+    // probe scenario below exists only to ask the core for the mover's
+    // movement-model moves; its goal is inert boilerplate that the move
+    // query never evaluates.
+    try {
+      const core = await loadCore();
+      const probe: Scenario = {
+        id: `${ex.id}-danger-probe`,
+        startFEN: ex.fen,
+        goal: { type: 'capture-all', targets: 'kqrbnp' },
+      };
+      const captureSquares = new Set(
+        core
+          .scenarioLegalMoves(probe, ex.fen)
+          .filter((m) => m.capture)
+          .map((m) => m.to),
+      );
+      const solvable = captureSquares.has(ex.square);
+      return {
+        valid: true,
+        solvable,
+        minSolutionLength: solvable ? 1 : null,
+        solutions: solvable ? [[ex.square]] : [],
+        // Unique when the threatened square is the only one — the
+        // authoring signal for "click THE piece in danger".
+        unique: solvable && captureSquares.size === 1,
+        ...base,
+        ...(solvable
+          ? {}
+          : {
+              reason: `no enemy capture lands on ${ex.square} — the piece there is not in danger`,
+            }),
+      };
+    } catch (err) {
+      return refusal(base.onTarget, err instanceof Error ? err.message : String(err));
+    }
+  }
+
+  if (ex.kind === 'game') {
+    // A full game has no solution concept (D6): the gate proves the
+    // start is a legal, still-live standard position and the opponent
+    // is one the core can play — nothing more. minSolutionLength 1
+    // records the one move-shaped fact a game offers (a first move
+    // exists, guaranteed by status "ongoing") and keeps the serve
+    // gate's "something to do" contract honest.
+    try {
+      const core = await loadCore();
+      // Data is untrusted JSON despite the literal type — check anyway.
+      if (!SUPPORTED_GAME_OPPONENTS.has(ex.opponent)) {
+        return refusal(base.onTarget, `unsupported game opponent '${String(ex.opponent)}'`);
+      }
+      const result = core.result(ex.startFEN);
+      if (result.status !== 'ongoing') {
+        return refusal(
+          base.onTarget,
+          `game start position is not a live game (${result.status})`,
+        );
+      }
+      return {
+        valid: true,
+        solvable: true,
+        minSolutionLength: 1,
+        solutions: [],
+        unique: false,
+        ...base,
+      };
+    } catch (err) {
+      return refusal(base.onTarget, err instanceof Error ? err.message : String(err));
+    }
   }
 
   // Scenario: every chess claim below is a core call.
@@ -242,21 +373,21 @@ export async function verifyExercise(
         : {}),
     };
   } catch (err) {
-    return {
-      valid: false,
-      solvable: false,
-      minSolutionLength: null,
-      solutions: [],
-      unique: false,
-      onTarget: base.onTarget,
-      reason: err instanceof Error ? err.message : String(err),
-    };
+    return refusal(base.onTarget, err instanceof Error ? err.message : String(err));
   }
 }
 
-/** The serve gate: does this report clear an exercise for a learner? */
+/** The serve gate: does this report clear an exercise for a learner?
+ * `minSolutionLength >= 1` refuses degenerate content whose goal is
+ * already met at the start position — solvable, but nothing to do (F6). */
 export function servable(report: VerifyReport): boolean {
-  return report.valid && report.solvable && report.onTarget;
+  return (
+    report.valid &&
+    report.solvable &&
+    report.onTarget &&
+    report.minSolutionLength !== null &&
+    report.minSolutionLength >= 1
+  );
 }
 
 /**

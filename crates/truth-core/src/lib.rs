@@ -15,11 +15,15 @@
 //! - `scenario_legal_moves(scenario_json, fen)`
 //! - `scenario_apply(scenario_json, fen, uci)`
 //! - `scenario_result(scenario_json, fen)`
+//! - `scenario_opponent_move(scenario_json, fen)` — the D3 greedy reply
+//! - `greedy_move(fen)`         — same policy in a FULL standard game
+//! - `scenario_opponent_move(scenario_json, fen)` — deterministic reply
+//! - `greedy_move(fen)`  — the greedy opponent in a full standard game
 
 mod engine;
 mod scenario;
 
-pub use scenario::{Constraints, Goal, Opponent, Scenario};
+pub use scenario::{Constraints, Goal, Opponent, OpponentReply, Scenario};
 
 use serde::Serialize;
 use shakmaty::Position;
@@ -131,6 +135,46 @@ pub fn scenario_result(scenario_json: &str, fen: &str) -> String {
     })())
 }
 
+/// The scenario opponent's deterministic reply, applied: returns
+/// `{move: MoveInfo | null, fen}` — `move` is null when the opponent has
+/// no legal reply (movement model: the turn passes back; standard rules:
+/// the game is over and the position stands).
+#[wasm_bindgen]
+pub fn scenario_opponent_move(scenario_json: &str, fen: &str) -> String {
+    envelope((|| {
+        let s = scenario::Scenario::from_json(scenario_json)?;
+        scenario::scenario_opponent_move(&s, fen)
+    })())
+}
+
+/// The greedy opponent's reply in a FULL standard game (day 13's Pip):
+/// highest-value capture, lexicographic tiebreaks — the same policy as
+/// `opponent: "greedy"` scenarios. Returns `{move: MoveInfo | null, fen}`;
+/// `move` is null when the game is already over.
+#[wasm_bindgen]
+pub fn greedy_move(fen: &str) -> String {
+    envelope((|| {
+        let pos = engine::parse_fen(fen)?;
+        let moves = engine::legal_moves(&pos);
+        match scenario::greedy_pick(&moves) {
+            Some(m) => {
+                let info = engine::move_info(&pos, &m);
+                let next = pos
+                    .play(&m)
+                    .map_err(|e| format!("greedy reply failed: {e}"))?;
+                Ok(OpponentReply {
+                    mv: Some(info),
+                    fen: engine::to_fen(&next),
+                })
+            }
+            None => Ok(OpponentReply {
+                mv: None,
+                fen: fen.to_string(),
+            }),
+        }
+    })())
+}
+
 /// Core version, for sanity checks across the JS boundary.
 #[wasm_bindgen]
 pub fn core_version() -> String {
@@ -163,6 +207,18 @@ mod tests {
         );
         let v: serde_json::Value = serde_json::from_str(&out).unwrap();
         assert_eq!(v["data"].as_array().unwrap().len(), 20);
+    }
+
+    #[test]
+    fn greedy_move_replies_and_reports_game_over() {
+        // Scholar's-mate-ish grab: black to move, white queen hangs on f3.
+        let out = greedy_move("rnb1kbnr/pppp1ppp/8/4p3/6q1/5Q2/PPPPPPPP/RNB1KBNR b KQkq - 0 1");
+        let v: serde_json::Value = serde_json::from_str(&out).unwrap();
+        assert_eq!(v["data"]["move"]["uci"], "g4f3", "takes the queen");
+        // Checkmate: no reply, position stands.
+        let mated = greedy_move("rnb1kbnr/pppp1ppp/8/4p3/6Pq/5P2/PPPPP2P/RNBQKBNR w KQkq - 1 3");
+        let v: serde_json::Value = serde_json::from_str(&mated).unwrap();
+        assert!(v["data"]["move"].is_null());
     }
 
     #[test]

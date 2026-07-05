@@ -3,11 +3,105 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Learn Chess — Day 1</title>
+    <title>Niboo Learns Chess</title>
+    <meta
+      name="description"
+      content="A tiny chess school built for one seven-year-old and shared with everyone: one piece a day, little puzzles, every one machine-proven solvable."
+    />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>♜</text></svg>" />
   </head>
   <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.ts"></script>
+    <div class="home">
+      <header class="hero">
+        <p class="brand">♜ Niboo Learns Chess</p>
+        <h1>Chess, one piece at a time.</h1>
+        <p class="lede">
+          Little puzzles that teach you how every piece really moves, and how
+          it gobbles.
+        </p>
+      </header>
+
+      <section class="mini-lesson" aria-label="Your first chess secret">
+        <div class="mini-boards">
+          <figure class="mini-board">
+            <svg viewBox="0 0 200 200" role="img" aria-label="A rook on a small board with dots along its whole row and column, making a plus shape.">
+              <defs>
+                <pattern id="ck-rook" width="80" height="80" patternUnits="userSpaceOnUse">
+                  <rect width="80" height="80" fill="#f0dfc0" />
+                  <rect x="40" width="40" height="40" fill="#b58863" />
+                  <rect y="40" width="40" height="40" fill="#b58863" />
+                </pattern>
+              </defs>
+              <rect width="200" height="200" fill="url(#ck-rook)" />
+              <g fill="rgba(43, 42, 39, 0.3)">
+                <circle cx="20" cy="100" r="6" /><circle cx="60" cy="100" r="6" />
+                <circle cx="140" cy="100" r="6" /><circle cx="180" cy="100" r="6" />
+                <circle cx="100" cy="20" r="6" /><circle cx="100" cy="60" r="6" />
+                <circle cx="100" cy="140" r="6" /><circle cx="100" cy="180" r="6" />
+              </g>
+              <text x="100" y="102" text-anchor="middle" dominant-baseline="central" font-size="36" fill="#fff" stroke="#333" stroke-width="1.1" paint-order="stroke">♜</text>
+            </svg>
+            <figcaption>The rook slides in straight lines. It makes a <strong>+</strong>.</figcaption>
+          </figure>
+          <figure class="mini-board">
+            <svg viewBox="0 0 200 200" role="img" aria-label="A bishop on a small board with dots along both diagonals, making an X shape.">
+              <defs>
+                <pattern id="ck-bishop" width="80" height="80" patternUnits="userSpaceOnUse">
+                  <rect width="80" height="80" fill="#f0dfc0" />
+                  <rect x="40" width="40" height="40" fill="#b58863" />
+                  <rect y="40" width="40" height="40" fill="#b58863" />
+                </pattern>
+              </defs>
+              <rect width="200" height="200" fill="url(#ck-bishop)" />
+              <g fill="rgba(43, 42, 39, 0.3)">
+                <circle cx="20" cy="20" r="6" /><circle cx="60" cy="60" r="6" />
+                <circle cx="140" cy="140" r="6" /><circle cx="180" cy="180" r="6" />
+                <circle cx="20" cy="180" r="6" /><circle cx="60" cy="140" r="6" />
+                <circle cx="140" cy="60" r="6" /><circle cx="180" cy="20" r="6" />
+              </g>
+              <text x="100" y="102" text-anchor="middle" dominant-baseline="central" font-size="36" fill="#fff" stroke="#333" stroke-width="1.1" paint-order="stroke">♝</text>
+            </svg>
+            <figcaption>The bishop slides on diagonals. It makes an <strong>×</strong>.</figcaption>
+          </figure>
+        </div>
+        <p class="kicker-after">See? You've already started.</p>
+      </section>
+
+      <section class="players-section" aria-label="Who's playing?">
+        <h2>Who's playing today?</h2>
+        <div class="players" id="players"></div>
+        <form class="new-player" id="new-player" hidden>
+          <label for="player-name">What's your name?</label>
+          <input id="player-name" name="name" maxlength="16" autocomplete="off" placeholder="Type it here" />
+          <p class="pick-label">Pick your piece:</p>
+          <div class="piece-pick" id="piece-pick"></div>
+          <button type="submit" class="primary" id="start-playing">Let's play!</button>
+        </form>
+      </section>
+
+      <footer class="parent-strip">
+        <h2>For grown-ups</h2>
+        <p>
+          It starts with seven short days: the board, all six pieces, piece
+          values, teamwork. One idea per day, built to stop while it's still fun.
+        </p>
+        <p>
+          And it's built for the long game: check, checkmate, tactics and whole
+          games are the road ahead. Chess never runs out of next things to
+          learn, and this little school is shaped to grow with your child for
+          years, not weeks.
+        </p>
+        <p>
+          Honest by construction: a chess engine proves every puzzle solvable
+          before it is ever shown, and the same engine judges every move.
+        </p>
+        <p>
+          Private by design: no accounts, no ads, no tracking. Progress lives
+          in this browser and nowhere else.
+        </p>
+        <p><a href="./about.html">The story behind Niboo Learns Chess →</a></p>
+      </footer>
+    </div>
+    <script type="module" src="/src/home.ts"></script>
   </body>
 </html>

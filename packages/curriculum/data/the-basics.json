@@ -1,9 +1,62 @@
 {
   "band": "the-basics",
   "title": "The Basics",
+  "complete": "Seven days. Six pieces. One whole army. You can name every square, slide rooks and bishops, sweep the queen everywhere, hop the knight over anything, march pawns into queens, walk the king safely — and always grab the best prize. Your next adventure — check and checkmate — is coming soon. And chess never runs out of adventures!",
+  "days": [
+    {
+      "day": 1,
+      "title": "The Board & The Rook",
+      "nodes": ["board-orientation", "rook-movement", "rook-capture"],
+      "wrapUp": "You can name any square, march a rook down its lines, and gobble everything in its path.",
+      "teaser": "Next: the bishop — the diagonal slider is waiting."
+    },
+    {
+      "day": 2,
+      "title": "The Bishop",
+      "nodes": ["bishop-movement", "bishop-capture"],
+      "wrapUp": "Diagonals are yours — and you know a bishop keeps its color forever.",
+      "teaser": "Next: the queen — a rook and a bishop wearing one crown."
+    },
+    {
+      "day": 3,
+      "title": "The Queen",
+      "nodes": ["queen-movement", "queen-capture"],
+      "wrapUp": "Straight AND diagonal — you steered the strongest piece on the board.",
+      "teaser": "Next: the knight — the only piece that can JUMP."
+    },
+    {
+      "day": 4,
+      "title": "The Knight",
+      "nodes": ["knight-movement", "knight-capture"],
+      "wrapUp": "L-shaped hops, right over the crowd — the trickiest piece is yours now.",
+      "teaser": "Next: the pawn — small, brave, and full of dreams."
+    },
+    {
+      "day": 5,
+      "title": "The Pawn",
+      "nodes": ["pawn-march", "pawn-capture"],
+      "wrapUp": "March straight, munch sideways — and you turned a little pawn into a QUEEN.",
+      "teaser": "Next: the king — the most important piece of all."
+    },
+    {
+      "day": 6,
+      "title": "The King",
+      "nodes": ["king-movement", "king-capture"],
+      "wrapUp": "One careful step at a time — you walked the king like a true bodyguard.",
+      "teaser": "Tomorrow is the big finish of your first week: the whole army together, and how to pick the best prize!"
+    },
+    {
+      "day": 7,
+      "title": "Values & The Whole Army",
+      "nodes": ["piece-values", "the-whole-army"],
+      "wrapUp": "You know what every piece is worth, and your pieces work as a team.",
+      "teaser": "Next adventure: check and checkmate — coming soon."
+    }
+  ],
   "nodes": [
     {
       "id": "board-orientation",
+      "strand": "board-vision",
       "title": "The Board",
       "objective": "Name any square: files a–h, ranks 1–8, and how the board is oriented.",
       "prereqs": [],
@@ -15,6 +68,7 @@
     },
     {
       "id": "rook-movement",
+      "strand": "piece-play",
       "title": "The Rook: Straight Lines",
       "objective": "Move a rook in straight lines; recognize that pieces block its path.",
       "prereqs": ["board-orientation"],
@@ -22,10 +76,15 @@
       "mastery": { "type": "n-correct-of-m", "n": 2, "m": 3 },
       "teaches": { "kinds": ["scenario"], "pieces": ["R"], "goalTypes": ["reach-square"] },
       "exercises": ["rook-race-01", "rook-race-02", "rook-race-03"],
-      "assessment": "rook-race-check"
+      "assessment": "rook-race-check",
+      "hints": {
+        "select": "Click your rook to see where it can go.",
+        "illegal": "The rook can only slide along its row or column, and it can’t jump over pieces. Pick one of the marked squares."
+      }
     },
     {
       "id": "rook-capture",
+      "strand": "piece-play",
       "title": "The Rook: Capturing",
       "objective": "Capture with the rook; plan an efficient route through several targets.",
       "prereqs": ["rook-movement"],
@@ -33,73 +92,210 @@
       "mastery": { "type": "n-correct-of-m", "n": 2, "m": 3 },
       "teaches": { "kinds": ["scenario"], "pieces": ["R"], "goalTypes": ["capture-all"] },
       "exercises": ["rook-gobble-01", "rook-gobble-02", "rook-gobble-03"],
-      "assessment": "rook-gobble-check"
+      "assessment": "rook-gobble-check",
+      "hints": {
+        "select": "Click your rook to see where it can go.",
+        "illegal": "The rook can only slide along its row or column, and it can’t jump over pieces. Pick one of the marked squares."
+      }
     },
     {
       "id": "bishop-movement",
+      "strand": "piece-play",
       "title": "The Bishop: Diagonals",
       "objective": "Move a bishop along diagonals; one bishop lives on one color forever.",
       "prereqs": ["board-orientation"],
-      "status": "stub",
+      "status": "active",
       "mastery": { "type": "n-correct-of-m", "n": 2, "m": 3 },
       "teaches": { "kinds": ["scenario"], "pieces": ["B"], "goalTypes": ["reach-square"] },
-      "exercises": []
+      "exercises": ["bishop-race-01", "bishop-race-02", "bishop-race-03"],
+      "assessment": "bishop-race-check",
+      "hints": {
+        "select": "Click your bishop to see where it can glide.",
+        "illegal": "The bishop slides only on diagonals — like an X, never straight — and it can’t jump. Pick one of the marked squares."
+      }
     },
     {
       "id": "bishop-capture",
+      "strand": "piece-play",
       "title": "The Bishop: Capturing",
       "objective": "Capture with the bishop across the diagonals.",
       "prereqs": ["bishop-movement"],
-      "status": "stub",
+      "status": "active",
       "mastery": { "type": "n-correct-of-m", "n": 2, "m": 3 },
       "teaches": { "kinds": ["scenario"], "pieces": ["B"], "goalTypes": ["capture-all"] },
-      "exercises": []
-    },
-    {
-      "id": "knight-movement",
-      "title": "The Knight",
-      "objective": "Make the knight's L-shaped jump; the only piece that leaps over others.",
-      "prereqs": ["board-orientation"],
-      "status": "stub",
-      "mastery": { "type": "n-correct-of-m", "n": 2, "m": 3 },
-      "teaches": { "kinds": ["scenario"], "pieces": ["N"], "goalTypes": ["reach-square", "capture-all"] },
-      "exercises": []
-    },
-    {
-      "id": "king-movement",
-      "title": "The King",
-      "objective": "Move the king one square in any direction.",
-      "prereqs": ["board-orientation"],
-      "status": "stub",
-      "mastery": { "type": "n-correct-of-m", "n": 2, "m": 3 },
-      "teaches": { "kinds": ["scenario"], "pieces": ["K"], "goalTypes": ["reach-square"] },
-      "exercises": []
-    },
-    {
-      "id": "pawn-move-and-capture",
-      "title": "The Pawn",
-      "objective": "Push pawns forward; capture diagonally; promote on the last rank.",
-      "prereqs": ["board-orientation"],
-      "status": "stub",
-      "mastery": { "type": "n-correct-of-m", "n": 3, "m": 4 },
-      "teaches": { "kinds": ["scenario"], "pieces": ["P"], "goalTypes": ["reach-square", "capture-all"] },
-      "exercises": []
+      "exercises": ["bishop-gobble-01", "bishop-gobble-02", "bishop-gobble-03"],
+      "assessment": "bishop-gobble-check",
+      "hints": {
+        "select": "Click your bishop to see where it can glide.",
+        "illegal": "The bishop slides only on diagonals — like an X, never straight — and it can’t jump. Pick one of the marked squares."
+      }
     },
     {
       "id": "queen-movement",
-      "title": "The Queen",
+      "strand": "piece-play",
+      "title": "The Queen: Every Direction",
       "objective": "The queen combines rook lines and bishop diagonals.",
       "prereqs": ["rook-capture", "bishop-capture"],
-      "status": "stub",
+      "status": "active",
       "mastery": { "type": "n-correct-of-m", "n": 2, "m": 3 },
-      "teaches": { "kinds": ["scenario"], "pieces": ["Q"], "goalTypes": ["reach-square", "capture-all"] },
-      "exercises": []
+      "teaches": { "kinds": ["scenario"], "pieces": ["Q"], "goalTypes": ["reach-square"] },
+      "exercises": ["queen-race-01", "queen-race-02", "queen-race-03"],
+      "assessment": "queen-race-check",
+      "hints": {
+        "select": "Click your queen to see where she can go.",
+        "illegal": "The queen moves like a rook AND a bishop — straight or diagonal, no jumping. Pick one of the marked squares."
+      }
     },
     {
-      "id": "piece-values-dont-hang",
-      "title": "Piece Values: Don't Hang Pieces",
-      "objective": "Know what each piece is worth and stop leaving pieces where they can be taken.",
-      "prereqs": ["rook-capture", "bishop-capture"],
+      "id": "queen-capture",
+      "strand": "piece-play",
+      "title": "The Queen: Capturing",
+      "objective": "Capture with the queen — straight or diagonal, the whole board is hers.",
+      "prereqs": ["queen-movement"],
+      "status": "active",
+      "mastery": { "type": "n-correct-of-m", "n": 2, "m": 3 },
+      "teaches": { "kinds": ["scenario"], "pieces": ["Q"], "goalTypes": ["capture-all"] },
+      "exercises": ["queen-gobble-01", "queen-gobble-02", "queen-gobble-03"],
+      "assessment": "queen-gobble-check",
+      "hints": {
+        "select": "Click your queen to see where she can go.",
+        "illegal": "The queen moves like a rook AND a bishop — straight or diagonal, no jumping. Pick one of the marked squares."
+      }
+    },
+    {
+      "id": "knight-movement",
+      "strand": "piece-play",
+      "title": "The Knight: The L-Jump",
+      "objective": "Make the knight's L-shaped jump; the only piece that leaps over others.",
+      "prereqs": ["board-orientation"],
+      "status": "active",
+      "mastery": { "type": "n-correct-of-m", "n": 2, "m": 3 },
+      "teaches": { "kinds": ["scenario"], "pieces": ["N"], "goalTypes": ["reach-square"] },
+      "exercises": ["knight-hop-01", "knight-hop-02", "knight-hop-03"],
+      "assessment": "knight-hop-check",
+      "hints": {
+        "select": "Click your knight to see where it can hop.",
+        "illegal": "Knights hop in an L: two squares one way, then one square sideways — and they can jump over anyone. Pick one of the marked squares."
+      }
+    },
+    {
+      "id": "knight-capture",
+      "strand": "piece-play",
+      "title": "The Knight: Capturing",
+      "objective": "Capture with the knight — land the L exactly on the target.",
+      "prereqs": ["knight-movement"],
+      "status": "active",
+      "mastery": { "type": "n-correct-of-m", "n": 2, "m": 3 },
+      "teaches": { "kinds": ["scenario"], "pieces": ["N"], "goalTypes": ["capture-all"] },
+      "exercises": ["knight-gobble-01", "knight-gobble-02", "knight-gobble-03"],
+      "assessment": "knight-gobble-check",
+      "hints": {
+        "select": "Click your knight to see where it can hop.",
+        "illegal": "Knights hop in an L: two squares one way, then one square sideways — and they can jump over anyone. Pick one of the marked squares."
+      }
+    },
+    {
+      "id": "pawn-march",
+      "strand": "piece-play",
+      "title": "The Pawn: Marching",
+      "objective": "March pawns straight ahead — one step, or two from the start — and promote on the last rank.",
+      "prereqs": ["board-orientation"],
+      "status": "active",
+      "mastery": { "type": "n-correct-of-m", "n": 2, "m": 3 },
+      "teaches": { "kinds": ["scenario"], "pieces": ["P"], "goalTypes": ["reach-square"] },
+      "exercises": ["pawn-march-01", "pawn-march-02", "pawn-march-03"],
+      "assessment": "pawn-march-check",
+      "hints": {
+        "select": "Click a pawn to see where it can march.",
+        "illegal": "Pawns march straight ahead one step — two on their very first move — and never backwards. Pick one of the marked squares."
+      }
+    },
+    {
+      "id": "pawn-capture",
+      "strand": "piece-play",
+      "title": "The Pawn: Gobbling",
+      "objective": "Capture diagonally with pawns: straight to march, sideways to munch.",
+      "prereqs": ["pawn-march"],
+      "status": "active",
+      "mastery": { "type": "n-correct-of-m", "n": 2, "m": 3 },
+      "teaches": { "kinds": ["scenario"], "pieces": ["P"], "goalTypes": ["capture-all"] },
+      "exercises": ["pawn-gobble-01", "pawn-gobble-02", "pawn-gobble-03"],
+      "assessment": "pawn-gobble-check",
+      "hints": {
+        "select": "Click a pawn to see where it can march or munch.",
+        "illegal": "Pawns gobble one step diagonally forward — never straight ahead. Pick one of the marked squares."
+      }
+    },
+    {
+      "id": "king-movement",
+      "strand": "piece-play",
+      "title": "The King: One Careful Step",
+      "objective": "Move the king one square in any direction.",
+      "prereqs": ["board-orientation"],
+      "status": "active",
+      "mastery": { "type": "n-correct-of-m", "n": 2, "m": 3 },
+      "teaches": { "kinds": ["scenario"], "pieces": ["K"], "goalTypes": ["reach-square"] },
+      "exercises": ["king-walk-01", "king-walk-02", "king-walk-03"],
+      "assessment": "king-walk-check",
+      "hints": {
+        "select": "Click your king to see where he can step.",
+        "illegal": "The king takes ONE careful step in any direction — never further, never jumping. Pick one of the marked squares."
+      }
+    },
+    {
+      "id": "king-capture",
+      "strand": "piece-play",
+      "title": "The King: Capturing",
+      "objective": "Capture with the king — one careful step onto the enemy's square.",
+      "prereqs": ["king-movement"],
+      "status": "active",
+      "mastery": { "type": "n-correct-of-m", "n": 2, "m": 3 },
+      "teaches": { "kinds": ["scenario"], "pieces": ["K"], "goalTypes": ["capture-all"] },
+      "exercises": ["king-gobble-01", "king-gobble-02", "king-gobble-03"],
+      "assessment": "king-gobble-check",
+      "hints": {
+        "select": "Click your king to see where he can step.",
+        "illegal": "The king takes ONE careful step in any direction — never further, never jumping. Pick one of the marked squares."
+      }
+    },
+    {
+      "id": "piece-values",
+      "strand": "value",
+      "title": "Piece Values: The Best Prize",
+      "objective": "Know what each piece is worth — pawn 1, knight 3, bishop 3, rook 5, queen 9 — and always take the biggest prize.",
+      "prereqs": ["queen-capture", "knight-capture", "pawn-capture"],
+      "status": "active",
+      "mastery": { "type": "n-correct-of-m", "n": 2, "m": 3 },
+      "teaches": { "kinds": ["scenario"], "pieces": ["R", "B", "N", "Q"], "goalTypes": ["capture-all"] },
+      "exercises": ["value-pick-01", "value-pick-02", "value-pick-03"],
+      "assessment": "value-pick-check",
+      "hints": {
+        "select": "Click your piece to see what it can grab.",
+        "illegal": "That square isn’t in reach. Look at the marked squares — which prize is worth the most?"
+      }
+    },
+    {
+      "id": "the-whole-army",
+      "strand": "teamwork",
+      "title": "The Whole Army",
+      "objective": "Use two pieces as a team — every piece pitches in.",
+      "prereqs": ["piece-values"],
+      "status": "active",
+      "mastery": { "type": "n-correct-of-m", "n": 2, "m": 3 },
+      "teaches": { "kinds": ["scenario"], "pieces": ["R", "B", "N", "Q"], "goalTypes": ["capture-all"] },
+      "exercises": ["army-gobble-01", "army-gobble-02", "army-gobble-03"],
+      "assessment": "army-gobble-check",
+      "hints": {
+        "select": "Click ANY of your pieces — they all want to help!",
+        "illegal": "That piece can’t reach there. Try one of the marked squares — or click a different piece."
+      }
+    },
+    {
+      "id": "dont-hang-pieces",
+      "strand": "value",
+      "title": "Don't Hang Pieces",
+      "objective": "Stop leaving pieces where they can be taken. (Waits for the opponent seam — someone must punish the mistake.)",
+      "prereqs": ["piece-values"],
       "status": "stub",
       "mastery": { "type": "n-correct-of-m", "n": 3, "m": 4 },
       "teaches": { "kinds": ["scenario"] },
@@ -107,9 +303,10 @@
     },
     {
       "id": "check-and-escaping-check",
+      "strand": "king-safety",
       "title": "Check & Escaping Check",
       "objective": "Recognize check and the three ways out: move, block, capture.",
-      "prereqs": ["queen-movement"],
+      "prereqs": ["queen-capture", "king-capture"],
       "status": "stub",
       "mastery": { "type": "n-correct-of-m", "n": 3, "m": 4 },
       "teaches": { "kinds": ["scenario"] },
@@ -117,6 +314,7 @@
     },
     {
       "id": "basic-mates",
+      "strand": "king-safety",
       "title": "Basic Checkmates",
       "objective": "Deliver the simplest mates: back rank, king-and-queen, king-and-rook.",
       "prereqs": ["check-and-escaping-check"],
@@ -218,7 +416,7 @@
     {
       "kind": "scenario",
       "id": "rook-gobble-01",
-      "prompt": "Gobble! Capture every black pawn. Land exactly on a pawn's square to take it.",
+      "prompt": "Gobble! Capture every black pawn. Land exactly on a pawn's square to take it — a red ring means you can eat that piece.",
       "scenario": {
         "id": "rook-gobble-01",
         "startFEN": "8/2p5/8/4p3/8/1p6/8/R7 w - - 0 1",
@@ -265,6 +463,630 @@
         "goal": { "type": "capture-all", "targets": "p" },
         "opponent": "none",
         "movesBudget": null
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "bishop-race-01",
+      "prompt": "The bishop slides any distance along a diagonal — always on its own color. Glide to the starred square in 2 moves.",
+      "scenario": {
+        "id": "bishop-race-01",
+        "startFEN": "8/8/8/8/8/8/8/2B5 w - - 0 1",
+        "allowed": { "pieces": ["B"], "moves": "bishop-diagonals", "castling": false },
+        "goal": { "type": "reach-square", "square": "d8", "piece": "B" },
+        "opponent": "none",
+        "movesBudget": 2
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "bishop-race-02",
+      "prompt": "Your own pawn blocks the road — bishops can't jump either! Curve around to the star in 3 moves.",
+      "scenario": {
+        "id": "bishop-race-02",
+        "startFEN": "8/8/8/8/8/3P4/8/5B2 w - - 0 1",
+        "allowed": { "pieces": ["B"], "moves": "bishop-diagonals", "castling": false },
+        "goal": { "type": "reach-square", "square": "a6", "piece": "B" },
+        "opponent": "none",
+        "movesBudget": 3
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "bishop-race-03",
+      "prompt": "One pawn sits right on your diagonal. Find the long way around — 3 moves to the star.",
+      "scenario": {
+        "id": "bishop-race-03",
+        "startFEN": "8/8/5P2/8/3B4/8/8/8 w - - 0 1",
+        "allowed": { "pieces": ["B"], "moves": "bishop-diagonals", "castling": false },
+        "goal": { "type": "reach-square", "square": "g7", "piece": "B" },
+        "opponent": "none",
+        "movesBudget": 3
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "bishop-race-check",
+      "prompt": "Checkpoint: reach the starred square in 2 moves.",
+      "scenario": {
+        "id": "bishop-race-check",
+        "startFEN": "8/8/8/8/8/8/8/1B6 w - - 0 1",
+        "allowed": { "pieces": ["B"], "moves": "bishop-diagonals", "castling": false },
+        "goal": { "type": "reach-square", "square": "e8", "piece": "B" },
+        "opponent": "none",
+        "movesBudget": 2
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "bishop-gobble-01",
+      "prompt": "Bishop Gobble! Slide along the diagonals and land right on each pawn — the red ring means you can eat it. Capture all three.",
+      "scenario": {
+        "id": "bishop-gobble-01",
+        "startFEN": "8/8/8/4p3/5p2/6p1/8/2B5 w - - 0 1",
+        "allowed": { "pieces": ["B"], "moves": "bishop-diagonals", "castling": false },
+        "goal": { "type": "capture-all", "targets": "p" },
+        "opponent": "none",
+        "movesBudget": null
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "bishop-gobble-02",
+      "prompt": "Five pawns, all on your color. Plan a zig-zag route and gobble them all.",
+      "scenario": {
+        "id": "bishop-gobble-02",
+        "startFEN": "8/6p1/5p2/2p5/3p4/4B3/1p6/8 w - - 0 1",
+        "allowed": { "pieces": ["B"], "moves": "bishop-diagonals", "castling": false },
+        "goal": { "type": "capture-all", "targets": "p" },
+        "opponent": "none",
+        "movesBudget": null
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "bishop-gobble-03",
+      "prompt": "Efficiency round: three pawns, three moves — every move must gobble!",
+      "scenario": {
+        "id": "bishop-gobble-03",
+        "startFEN": "8/8/8/4p3/8/2p5/7p/B7 w - - 0 1",
+        "allowed": { "pieces": ["B"], "moves": "bishop-diagonals", "castling": false },
+        "goal": { "type": "capture-all", "targets": "p" },
+        "opponent": "none",
+        "movesBudget": 3
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "bishop-gobble-check",
+      "prompt": "Checkpoint: capture all four pawns.",
+      "scenario": {
+        "id": "bishop-gobble-check",
+        "startFEN": "8/1p6/2p5/8/4p3/3p4/8/5B2 w - - 0 1",
+        "allowed": { "pieces": ["B"], "moves": "bishop-diagonals", "castling": false },
+        "goal": { "type": "capture-all", "targets": "p" },
+        "opponent": "none",
+        "movesBudget": null
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "queen-race-01",
+      "prompt": "The queen is a rook AND a bishop in one — straight lines and diagonals. Reach the star in 2 moves.",
+      "scenario": {
+        "id": "queen-race-01",
+        "startFEN": "8/8/8/8/8/8/8/3Q4 w - - 0 1",
+        "allowed": { "pieces": ["Q"], "moves": "queen-lines", "castling": false },
+        "goal": { "type": "reach-square", "square": "g7", "piece": "Q" },
+        "opponent": "none",
+        "movesBudget": 2
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "queen-race-02",
+      "prompt": "Your pawn blocks the straight road up. Remember: the queen has diagonals too! Reach the star in 2 moves.",
+      "scenario": {
+        "id": "queen-race-02",
+        "startFEN": "8/8/8/8/P7/8/8/Q7 w - - 0 1",
+        "allowed": { "pieces": ["Q"], "moves": "queen-lines", "castling": false },
+        "goal": { "type": "reach-square", "square": "a8", "piece": "Q" },
+        "opponent": "none",
+        "movesBudget": 2
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "queen-race-03",
+      "prompt": "Both straight roads are blocked. Mix a diagonal with a straight line — 2 moves to the star.",
+      "scenario": {
+        "id": "queen-race-03",
+        "startFEN": "8/3P4/8/8/7P/8/8/Q7 w - - 0 1",
+        "allowed": { "pieces": ["Q"], "moves": "queen-lines", "castling": false },
+        "goal": { "type": "reach-square", "square": "h7", "piece": "Q" },
+        "opponent": "none",
+        "movesBudget": 2
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "queen-race-check",
+      "prompt": "Checkpoint: reach the starred square in 2 moves.",
+      "scenario": {
+        "id": "queen-race-check",
+        "startFEN": "8/8/8/8/8/8/8/7Q w - - 0 1",
+        "allowed": { "pieces": ["Q"], "moves": "queen-lines", "castling": false },
+        "goal": { "type": "reach-square", "square": "c7", "piece": "Q" },
+        "opponent": "none",
+        "movesBudget": 2
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "queen-gobble-01",
+      "prompt": "Queen Gobble! Straight or diagonal — land on each pawn and eat it. Capture all four.",
+      "scenario": {
+        "id": "queen-gobble-01",
+        "startFEN": "8/8/8/3p2p1/8/8/1p4p1/3Q4 w - - 0 1",
+        "allowed": { "pieces": ["Q"], "moves": "queen-lines", "castling": false },
+        "goal": { "type": "capture-all", "targets": "p" },
+        "opponent": "none",
+        "movesBudget": null
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "queen-gobble-02",
+      "prompt": "Five pawns, every direction. Show the queen's full power — gobble them all.",
+      "scenario": {
+        "id": "queen-gobble-02",
+        "startFEN": "8/1p6/8/8/1p2Q3/6p1/3p3p/8 w - - 0 1",
+        "allowed": { "pieces": ["Q"], "moves": "queen-lines", "castling": false },
+        "goal": { "type": "capture-all", "targets": "p" },
+        "opponent": "none",
+        "movesBudget": null
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "queen-gobble-03",
+      "prompt": "Efficiency round: four pawns, four moves. One gobble per move!",
+      "scenario": {
+        "id": "queen-gobble-03",
+        "startFEN": "8/8/8/8/2p2p2/8/p2p4/2Q5 w - - 0 1",
+        "allowed": { "pieces": ["Q"], "moves": "queen-lines", "castling": false },
+        "goal": { "type": "capture-all", "targets": "p" },
+        "opponent": "none",
+        "movesBudget": 4
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "queen-gobble-check",
+      "prompt": "Checkpoint: capture all four pawns.",
+      "scenario": {
+        "id": "queen-gobble-check",
+        "startFEN": "3Q4/1p6/8/3p2p1/8/8/6p1/8 w - - 0 1",
+        "allowed": { "pieces": ["Q"], "moves": "queen-lines", "castling": false },
+        "goal": { "type": "capture-all", "targets": "p" },
+        "opponent": "none",
+        "movesBudget": null
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "knight-hop-01",
+      "prompt": "The knight jumps in an L: two squares one way, then one square sideways. Two hops to the star!",
+      "scenario": {
+        "id": "knight-hop-01",
+        "startFEN": "8/8/8/8/8/8/8/6N1 w - - 0 1",
+        "allowed": { "pieces": ["N"], "moves": "knight-jumps", "castling": false },
+        "goal": { "type": "reach-square", "square": "e5", "piece": "N" },
+        "opponent": "none",
+        "movesBudget": 2
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "knight-hop-02",
+      "prompt": "Your knight is fenced in by pawns! No problem — knights JUMP over pieces. One hop over the fence to the star.",
+      "scenario": {
+        "id": "knight-hop-02",
+        "startFEN": "8/8/8/2PPP3/2PNP3/2PPP3/8/8 w - - 0 1",
+        "allowed": { "pieces": ["N"], "moves": "knight-jumps", "castling": false },
+        "goal": { "type": "reach-square", "square": "f5", "piece": "N" },
+        "opponent": "none",
+        "movesBudget": 1
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "knight-hop-03",
+      "prompt": "Hop over your own pawn wall — the knight is the only piece that can. Reach the star in 3 hops.",
+      "scenario": {
+        "id": "knight-hop-03",
+        "startFEN": "8/8/8/8/8/8/5PPP/6N1 w - - 0 1",
+        "allowed": { "pieces": ["N"], "moves": "knight-jumps", "castling": false },
+        "goal": { "type": "reach-square", "square": "h5", "piece": "N" },
+        "opponent": "none",
+        "movesBudget": 3
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "knight-hop-check",
+      "prompt": "Checkpoint: two hops to the star.",
+      "scenario": {
+        "id": "knight-hop-check",
+        "startFEN": "8/8/8/8/8/8/8/N7 w - - 0 1",
+        "allowed": { "pieces": ["N"], "moves": "knight-jumps", "castling": false },
+        "goal": { "type": "reach-square", "square": "c5", "piece": "N" },
+        "opponent": "none",
+        "movesBudget": 2
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "knight-gobble-01",
+      "prompt": "Knight Gobble! Land the L exactly on each pawn — the red ring means you can eat it. Capture all three.",
+      "scenario": {
+        "id": "knight-gobble-01",
+        "startFEN": "8/8/4p3/2p5/p2N4/8/8/8 w - - 0 1",
+        "allowed": { "pieces": ["N"], "moves": "knight-jumps", "castling": false },
+        "goal": { "type": "capture-all", "targets": "p" },
+        "opponent": "none",
+        "movesBudget": null
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "knight-gobble-02",
+      "prompt": "Four pawns to gobble — and two of YOUR pawns right in the middle. Jump over them like they're not even there! Every hop must gobble.",
+      "scenario": {
+        "id": "knight-gobble-02",
+        "startFEN": "8/8/5p2/3pP2p/3P4/2p5/8/1N6 w - - 0 1",
+        "allowed": { "pieces": ["N"], "moves": "knight-jumps", "castling": false },
+        "goal": { "type": "capture-all", "targets": "p" },
+        "opponent": "none",
+        "movesBudget": 4
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "knight-gobble-03",
+      "prompt": "Efficiency round: three pawns, three hops. Every hop must gobble!",
+      "scenario": {
+        "id": "knight-gobble-03",
+        "startFEN": "8/8/3p4/5p2/8/6p1/8/7N w - - 0 1",
+        "allowed": { "pieces": ["N"], "moves": "knight-jumps", "castling": false },
+        "goal": { "type": "capture-all", "targets": "p" },
+        "opponent": "none",
+        "movesBudget": 3
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "knight-gobble-check",
+      "prompt": "Checkpoint: gobble all three pawns.",
+      "scenario": {
+        "id": "knight-gobble-check",
+        "startFEN": "8/3p4/1p6/2p5/N7/8/8/8 w - - 0 1",
+        "allowed": { "pieces": ["N"], "moves": "knight-jumps", "castling": false },
+        "goal": { "type": "capture-all", "targets": "p" },
+        "opponent": "none",
+        "movesBudget": null
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "pawn-march-01",
+      "prompt": "Pawns march straight ahead, one square at a time — but on their very FIRST move they may go two! Reach the star in 1 move.",
+      "scenario": {
+        "id": "pawn-march-01",
+        "startFEN": "8/8/8/8/8/8/4P3/8 w - - 0 1",
+        "allowed": { "pieces": ["P"], "moves": "pawn-moves", "castling": false },
+        "goal": { "type": "reach-square", "square": "e4", "piece": "P" },
+        "opponent": "none",
+        "movesBudget": 1
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "pawn-march-02",
+      "prompt": "The pawn's dream: reach the far end of the board and it TRANSFORMS into a queen! March to the star — 3 moves to a miracle.",
+      "scenario": {
+        "id": "pawn-march-02",
+        "startFEN": "8/8/8/1P6/8/8/8/8 w - - 0 1",
+        "allowed": { "pieces": ["P"], "moves": "pawn-moves", "castling": false },
+        "goal": { "type": "reach-square", "square": "b8", "piece": "Q" },
+        "opponent": "none",
+        "movesBudget": 3
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "pawn-march-03",
+      "prompt": "Uh-oh — your d-pawn is stuck nose-to-nose, and pawns can't push past. March your OTHER pawn to the star in 2 moves.",
+      "scenario": {
+        "id": "pawn-march-03",
+        "startFEN": "8/8/8/8/3p4/3P4/4P3/8 w - - 0 1",
+        "allowed": { "pieces": ["P"], "moves": "pawn-moves", "castling": false },
+        "goal": { "type": "reach-square", "square": "e5", "piece": "P" },
+        "opponent": "none",
+        "movesBudget": 2
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "pawn-march-check",
+      "prompt": "Checkpoint: march to the star in 2 moves.",
+      "scenario": {
+        "id": "pawn-march-check",
+        "startFEN": "8/8/8/8/8/8/6P1/8 w - - 0 1",
+        "allowed": { "pieces": ["P"], "moves": "pawn-moves", "castling": false },
+        "goal": { "type": "reach-square", "square": "g5", "piece": "P" },
+        "opponent": "none",
+        "movesBudget": 2
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "pawn-gobble-01",
+      "prompt": "Pawns are sneaky: they march STRAIGHT but gobble DIAGONALLY — one step forward-sideways, like a tiny bite. Eat all three!",
+      "scenario": {
+        "id": "pawn-gobble-01",
+        "startFEN": "8/5p2/4p3/3p4/4P3/8/8/8 w - - 0 1",
+        "allowed": { "pieces": ["P"], "moves": "pawn-moves", "castling": false },
+        "goal": { "type": "capture-all", "targets": "p" },
+        "opponent": "none",
+        "movesBudget": null
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "pawn-gobble-02",
+      "prompt": "Gobble up the staircase — the last bite lands on the top row. CHOMP, and your pawn becomes a QUEEN!",
+      "scenario": {
+        "id": "pawn-gobble-02",
+        "startFEN": "7r/6p1/5p2/4P3/8/8/8/8 w - - 0 1",
+        "allowed": { "pieces": ["P"], "moves": "pawn-moves", "castling": false },
+        "goal": { "type": "capture-all", "targets": "pr" },
+        "opponent": "none",
+        "movesBudget": 3
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "pawn-gobble-03",
+      "prompt": "March first, then munch! One small step forward puts the pawns in reach of your bite. Four moves: one march, three gobbles.",
+      "scenario": {
+        "id": "pawn-gobble-03",
+        "startFEN": "8/8/5p2/4p3/3p4/8/2P5/8 w - - 0 1",
+        "allowed": { "pieces": ["P"], "moves": "pawn-moves", "castling": false },
+        "goal": { "type": "capture-all", "targets": "p" },
+        "opponent": "none",
+        "movesBudget": 4
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "pawn-gobble-check",
+      "prompt": "Checkpoint: gobble all three — remember, pawns bite diagonally!",
+      "scenario": {
+        "id": "pawn-gobble-check",
+        "startFEN": "8/3p4/4p3/3p4/4P3/8/8/8 w - - 0 1",
+        "allowed": { "pieces": ["P"], "moves": "pawn-moves", "castling": false },
+        "goal": { "type": "capture-all", "targets": "p" },
+        "opponent": "none",
+        "movesBudget": null
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "king-walk-01",
+      "prompt": "The king is the most important piece — and a careful one. He steps ONE square in any direction. Walk to the star: 3 steps.",
+      "scenario": {
+        "id": "king-walk-01",
+        "startFEN": "8/8/8/8/8/8/8/4K3 w - - 0 1",
+        "allowed": { "pieces": ["K"], "moves": "king-steps", "castling": false },
+        "goal": { "type": "reach-square", "square": "e4", "piece": "K" },
+        "opponent": "none",
+        "movesBudget": 3
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "king-walk-02",
+      "prompt": "Kings step in all eight directions — even diagonally. The diagonal is the shortcut: 3 steps to the star.",
+      "scenario": {
+        "id": "king-walk-02",
+        "startFEN": "8/8/8/8/8/8/8/K7 w - - 0 1",
+        "allowed": { "pieces": ["K"], "moves": "king-steps", "castling": false },
+        "goal": { "type": "reach-square", "square": "d4", "piece": "K" },
+        "opponent": "none",
+        "movesBudget": 3
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "king-walk-03",
+      "prompt": "Your own pawns make a wall, and kings never jump. Walk AROUND the wall to the star — 4 careful steps.",
+      "scenario": {
+        "id": "king-walk-03",
+        "startFEN": "8/8/8/8/8/8/2PPP3/3K4 w - - 0 1",
+        "allowed": { "pieces": ["K"], "moves": "king-steps", "castling": false },
+        "goal": { "type": "reach-square", "square": "d3", "piece": "K" },
+        "opponent": "none",
+        "movesBudget": 4
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "king-walk-check",
+      "prompt": "Checkpoint: two steps to the star.",
+      "scenario": {
+        "id": "king-walk-check",
+        "startFEN": "7K/8/8/8/8/8/8/8 w - - 0 1",
+        "allowed": { "pieces": ["K"], "moves": "king-steps", "castling": false },
+        "goal": { "type": "reach-square", "square": "f6", "piece": "K" },
+        "opponent": "none",
+        "movesBudget": 2
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "king-gobble-01",
+      "prompt": "King Gobble! The king captures just like he walks: one careful step onto the enemy's square. Eat all three pawns.",
+      "scenario": {
+        "id": "king-gobble-01",
+        "startFEN": "8/8/5p2/3pp3/3K4/8/8/8 w - - 0 1",
+        "allowed": { "pieces": ["K"], "moves": "king-steps", "castling": false },
+        "goal": { "type": "capture-all", "targets": "p" },
+        "opponent": "none",
+        "movesBudget": null
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "king-gobble-02",
+      "prompt": "Three pawns on a trail. March your king from snack to snack and gobble them all.",
+      "scenario": {
+        "id": "king-gobble-02",
+        "startFEN": "8/8/3p4/2p5/8/1p6/8/K7 w - - 0 1",
+        "allowed": { "pieces": ["K"], "moves": "king-steps", "castling": false },
+        "goal": { "type": "capture-all", "targets": "p" },
+        "opponent": "none",
+        "movesBudget": null
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "king-gobble-03",
+      "prompt": "A wall of three pawns! Munch straight through it — one bite per step, three steps.",
+      "scenario": {
+        "id": "king-gobble-03",
+        "startFEN": "8/8/8/8/2ppp3/3K4/8/8 w - - 0 1",
+        "allowed": { "pieces": ["K"], "moves": "king-steps", "castling": false },
+        "goal": { "type": "capture-all", "targets": "p" },
+        "opponent": "none",
+        "movesBudget": 3
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "king-gobble-check",
+      "prompt": "Checkpoint: gobble all three pawns.",
+      "scenario": {
+        "id": "king-gobble-check",
+        "startFEN": "8/2p5/3p4/4p3/4K3/8/8/8 w - - 0 1",
+        "allowed": { "pieces": ["K"], "moves": "king-steps", "castling": false },
+        "goal": { "type": "capture-all", "targets": "p" },
+        "opponent": "none",
+        "movesBudget": null
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "value-pick-01",
+      "prompt": "Every piece has a value: pawn 1 · knight 3 · bishop 3 · rook 5 · queen 9. You have ONE move — a knight (3) or a pawn (1)? Take the bigger prize!",
+      "scenario": {
+        "id": "value-pick-01",
+        "startFEN": "3n4/8/8/8/3R3p/8/8/8 w - - 0 1",
+        "allowed": { "pieces": ["R"], "moves": "rook-lines", "castling": false },
+        "goal": { "type": "capture-all", "targets": "n" },
+        "opponent": "none",
+        "movesBudget": 1
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "value-pick-02",
+      "prompt": "Bishop's choice, one move: a rook (5 points) or a pawn (1 point)? Grab the rook!",
+      "scenario": {
+        "id": "value-pick-02",
+        "startFEN": "8/8/8/6r1/8/p7/8/2B5 w - - 0 1",
+        "allowed": { "pieces": ["B"], "moves": "bishop-diagonals", "castling": false },
+        "goal": { "type": "capture-all", "targets": "r" },
+        "opponent": "none",
+        "movesBudget": 1
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "value-pick-03",
+      "prompt": "The biggest prize in chess: the enemy QUEEN (9 points) — or a rook (5)? One move. Choose like a champion!",
+      "scenario": {
+        "id": "value-pick-03",
+        "startFEN": "3q4/8/8/8/3Q3r/8/8/8 w - - 0 1",
+        "allowed": { "pieces": ["Q"], "moves": "queen-lines", "castling": false },
+        "goal": { "type": "capture-all", "targets": "q" },
+        "opponent": "none",
+        "movesBudget": 1
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "value-pick-check",
+      "prompt": "Checkpoint: one move, one prize. Take the bigger one!",
+      "scenario": {
+        "id": "value-pick-check",
+        "startFEN": "8/8/8/3r4/8/2N5/4p3/8 w - - 0 1",
+        "allowed": { "pieces": ["N"], "moves": "knight-jumps", "castling": false },
+        "goal": { "type": "capture-all", "targets": "r" },
+        "opponent": "none",
+        "movesBudget": 1
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "army-gobble-01",
+      "prompt": "Your rook AND bishop hunt together! Four pawns, four moves — every move must gobble, so both pieces pitch in.",
+      "scenario": {
+        "id": "army-gobble-01",
+        "startFEN": "8/8/8/pp2p3/8/3p4/8/R4B2 w - - 0 1",
+        "allowed": { "pieces": ["R", "B"], "moves": "all", "castling": false },
+        "goal": { "type": "capture-all", "targets": "p" },
+        "opponent": "none",
+        "movesBudget": 4
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "army-gobble-02",
+      "prompt": "Rook and knight, teamwork! Four pawns, four moves — the knight hops, the rook zooms.",
+      "scenario": {
+        "id": "army-gobble-02",
+        "startFEN": "8/8/8/3pp2p/8/2p5/8/1N5R w - - 0 1",
+        "allowed": { "pieces": ["R", "N"], "moves": "all", "castling": false },
+        "goal": { "type": "capture-all", "targets": "p" },
+        "opponent": "none",
+        "movesBudget": 4
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "army-gobble-03",
+      "prompt": "The queen leads the army! Four pawns, four moves — queen and knight share the feast.",
+      "scenario": {
+        "id": "army-gobble-03",
+        "startFEN": "8/p5p1/8/4p3/8/5p2/8/Q5N1 w - - 0 1",
+        "allowed": { "pieces": ["Q", "N"], "moves": "all", "castling": false },
+        "goal": { "type": "capture-all", "targets": "p" },
+        "opponent": "none",
+        "movesBudget": 4
+      }
+    },
+    {
+      "kind": "scenario",
+      "id": "army-gobble-check",
+      "prompt": "Checkpoint: three pawns, three moves — use BOTH pieces.",
+      "scenario": {
+        "id": "army-gobble-check",
+        "startFEN": "8/8/1p2p3/8/5p2/8/8/2B1R3 w - - 0 1",
+        "allowed": { "pieces": ["R", "B"], "moves": "all", "castling": false },
+        "goal": { "type": "capture-all", "targets": "p" },
+        "opponent": "none",
+        "movesBudget": 3
       }
     }
   ]

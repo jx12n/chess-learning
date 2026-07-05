@@ -90,3 +90,175 @@ describe('scenario API over the boundary (P2 gate: Gobble playable)', () => {
     );
   });
 });
+
+/**
+ * Wire-drift hardening (finding F3): the TS types in `src/types.ts`
+ * mirror the serde types by hand, so drift enters silently in two
+ * directions. These tests pin both. When ts-rs adoption lands (the
+ * recorded follow-up), the generated types replace the mirror and the
+ * deserialize direction of this suite becomes redundant; the keyset
+ * assertions stay valuable as envelope-stability proof.
+ */
+describe('wire drift (F3): TS-side constructions marshal into serde', () => {
+  it('every TS-constructible goal and opponent deserializes — refusals are validation, never parsing', async () => {
+    const core = await loadCore();
+    // Each entry: a scenario built from the TS types as authors and the
+    // play surface build them. `accept` = the core returns a move list;
+    // otherwise the error must be the named VALIDATION message — a
+    // parse error ("invalid scenario") here means the wire drifted.
+    const table: Array<{ s: Scenario; accept: boolean; error?: RegExp }> = [
+      {
+        s: {
+          id: 'w-give-check',
+          startFEN: '4k3/8/8/8/8/8/8/R3K3 w - - 0 1',
+          allowed: { pieces: ['R'] },
+          goal: { type: 'give-check' },
+          rules: 'standard',
+          movesBudget: 1,
+        },
+        accept: true,
+      },
+      {
+        s: {
+          id: 'w-checkmate',
+          startFEN: 'k7/8/1K6/8/8/8/8/2Q5 w - - 0 1',
+          goal: { type: 'checkmate' },
+          rules: 'standard',
+          movesBudget: 1,
+        },
+        accept: true,
+      },
+      {
+        s: {
+          id: 'w-escape',
+          startFEN: '4r2k/8/8/8/8/8/8/4K3 w - - 0 1',
+          goal: { type: 'escape-check' },
+          rules: 'standard',
+          movesBudget: 1,
+        },
+        accept: true,
+      },
+      {
+        s: {
+          id: 'w-survive',
+          startFEN: 'r7/8/8/8/8/2N5/8/8 w - - 0 1',
+          allowed: { pieces: ['N'] },
+          goal: { type: 'survive', moves: 2 },
+          opponent: 'greedy',
+          movesBudget: 2,
+        },
+        accept: true,
+      },
+      {
+        s: {
+          id: 'w-engine',
+          startFEN: 'r7/8/8/8/8/2N5/8/8 w - - 0 1',
+          goal: { type: 'survive', moves: 1 },
+          opponent: 'engine',
+          movesBudget: 1,
+        },
+        accept: false,
+        error: /deferred seam/,
+      },
+      {
+        s: {
+          id: 'w-d1',
+          startFEN: 'k7/8/1K6/8/8/8/8/2Q5 w - - 0 1',
+          goal: { type: 'checkmate' },
+          rules: 'standard',
+          movesBudget: 2,
+        },
+        accept: false,
+        error: /movesBudget 1/,
+      },
+      {
+        s: {
+          id: 'w-wrong-model',
+          startFEN: '4k3/8/8/8/8/8/8/R3K3 w - - 0 1',
+          goal: { type: 'give-check' },
+          movesBudget: 1,
+        },
+        accept: false,
+        error: /standard/,
+      },
+    ];
+    for (const { s, accept, error } of table) {
+      if (accept) {
+        expect(core.scenarioLegalMoves(s, s.startFEN).length, s.id).toBeGreaterThan(0);
+      } else {
+        expect(() => core.scenarioLegalMoves(s, s.startFEN), s.id).toThrow(error);
+      }
+    }
+  });
+
+  it('core outputs carry exactly the keys the TS types declare', async () => {
+    const core = await loadCore();
+    const keysOf = (o: object): string[] => Object.keys(o).sort();
+
+    // MoveInfo — every field always present on the wire.
+    const move = core.legalMoves(START)[0]!;
+    expect(keysOf(move)).toEqual([
+      'capture',
+      'castle',
+      'from',
+      'piece',
+      'san',
+      'to',
+      'uci',
+    ]);
+
+    // GameResult — optional fields appear exactly when meaningful.
+    const foolsMate =
+      'rnb1kbnr/pppp1ppp/8/4p3/6Pq/5P2/PPPPP2P/RNBQKBNR w KQkq - 1 3';
+    expect(keysOf(core.result(foolsMate))).toEqual([
+      'check',
+      'reason',
+      'status',
+      'winner',
+    ]);
+    expect(keysOf(core.result(START))).toEqual(['check', 'status']);
+
+    // ScenarioResult — movesLeft rides with a budget, reason with failure.
+    const race: Scenario = {
+      id: 'w-race',
+      startFEN: '8/8/8/8/8/8/8/R7 w - - 0 1',
+      allowed: { pieces: ['R'] },
+      goal: { type: 'reach-square', square: 'h8', piece: 'R' },
+      movesBudget: 2,
+    };
+    const won = core.scenarioApply(race, core.scenarioApply(race, race.startFEN, 'a1a8'), 'a8h8');
+    expect(keysOf(core.scenarioResult(race, won))).toEqual([
+      'movesLeft',
+      'movesUsed',
+      'status',
+    ]);
+
+    // OpponentReply — from a scenario opponent and from the full-game
+    // helper alike; the applied move is a full MoveInfo.
+    const survive: Scenario = {
+      id: 'w-reply',
+      startFEN: 'r7/8/8/8/8/2N5/8/8 w - - 0 1',
+      allowed: { pieces: ['N'] },
+      goal: { type: 'survive', moves: 2 },
+      opponent: 'greedy',
+      movesBudget: 2,
+    };
+    const afterLearner = core.scenarioApply(survive, survive.startFEN, 'c3e2');
+    const reply = core.scenarioOpponentMove(survive, afterLearner);
+    expect(keysOf(reply)).toEqual(['fen', 'move']);
+    expect(keysOf(reply.move!)).toEqual([
+      'capture',
+      'castle',
+      'from',
+      'piece',
+      'san',
+      'to',
+      'uci',
+    ]);
+    const gameReply = core.greedyMove(START);
+    expect(keysOf(gameReply)).toEqual(['fen', 'move']);
+
+    // Eval — the deferred oracle seam's stable shape.
+    expect(keysOf(core.evaluate(START))).toEqual(['status']);
+  });
+});

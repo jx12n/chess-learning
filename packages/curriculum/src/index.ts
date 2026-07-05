@@ -7,6 +7,7 @@
 export type {
   AttemptEvent,
   Curriculum,
+  DayPlan,
   Exercise,
   LearnerModel,
   LearnerState,
@@ -16,8 +17,11 @@ export type {
 } from './types.js';
 
 export { counterLearnerModel } from './learner.js';
+export { dayForNode, dayNodes, nextDay } from './days.js';
+export { stateWhere, type StepMatch } from './simulate.js';
 export {
   exerciseById,
+  frontier,
   nextStep,
   validateCurriculum,
   type NextStep,
@@ -25,7 +29,9 @@ export {
 
 import type { Curriculum } from './types.js';
 import { validateCurriculum } from './router.js';
-import rawTheBasics from '../data/the-basics.json';
+// The import attribute keeps this package loadable by plain Node ESM
+// (Playwright specs, future agent tooling), not just bundlers.
+import rawTheBasics from '../data/the-basics.json' with { type: 'json' };
 
 /**
  * Load and validate a curriculum from parsed JSON. Throws on structural
@@ -40,7 +46,9 @@ export function loadCurriculum(raw: unknown): Curriculum {
   return curriculum;
 }
 
-/** The Basics band (Day 1 nodes active, the rest stubbed). */
+/** The Basics band: days 1–7 authored and active; the band-2 nodes
+ * (`dont-hang-pieces`, `check-and-escaping-check`, `basic-mates`) shape
+ * the DAG as stubs until their days are authored. */
 export function theBasics(): Curriculum {
   return loadCurriculum(rawTheBasics);
 }

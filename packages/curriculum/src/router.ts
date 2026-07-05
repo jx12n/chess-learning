@@ -1,12 +1,15 @@
 /**
  * Outer tutoring loop: decide what the learner sees next.
  *
- * Routing rule: walk the band's nodes in authored order; serve the first
- * ACTIVE node that is not yet mastered and whose prereqs are all
- * mastered. Within a node: cycle its practice exercises until the
- * mastery rule is met, then serve the assessment (if any) until passed.
- * Stub nodes are never served, and they block their descendants —
- * unauthored content cannot be routed past.
+ * Eligibility is one question — `frontier()`: every active node not yet
+ * mastered whose prereqs are all mastered. Serving order is a *policy*
+ * on top of it: `nextStep` takes the frontier's first node in authored
+ * order (the linear walk the Basics wants); a choice menu, a spiral
+ * scheduler or an agent picks differently from the same frontier.
+ * Within a node: cycle its practice exercises until the mastery rule is
+ * met, then serve the assessment (if any) until passed. Stub nodes are
+ * never served, and they block their descendants — unauthored content
+ * cannot be routed past.
  */
 
 import type {
@@ -45,41 +48,54 @@ function isAvailable(
   });
 }
 
+/**
+ * The learner's frontier: all nodes they could work on right now, in
+ * authored order. Empty exactly when the routable band is done.
+ */
+export function frontier(
+  curriculum: Curriculum,
+  model: LearnerModel,
+  state: LearnerState,
+): SkillNode[] {
+  return curriculum.nodes.filter(
+    (node) =>
+      node.status === 'active' &&
+      !model.mastered(state, node) &&
+      isAvailable(node, curriculum, model, state),
+  );
+}
+
 export function nextStep(
   curriculum: Curriculum,
   model: LearnerModel,
   state: LearnerState,
 ): NextStep {
-  for (const node of curriculum.nodes) {
-    if (node.status !== 'active') continue;
-    if (model.mastered(state, node)) continue;
-    if (!isAvailable(node, curriculum, model, state)) continue;
+  const node = frontier(curriculum, model, state)[0];
+  if (node === undefined) return { done: true };
 
-    if (!model.practiceMastered(state, node)) {
-      if (node.exercises.length === 0) {
-        throw new Error(`active node '${node.id}' has no exercises`);
-      }
-      const i = model.practiceAttempts(state, node.id) % node.exercises.length;
-      const id = node.exercises[i]!;
-      return {
-        done: false,
-        node,
-        exercise: exerciseById(curriculum, id),
-        phase: 'practice',
-      };
+  if (!model.practiceMastered(state, node)) {
+    if (node.exercises.length === 0) {
+      throw new Error(`active node '${node.id}' has no exercises`);
     }
-    if (node.assessment !== undefined) {
-      return {
-        done: false,
-        node,
-        exercise: exerciseById(curriculum, node.assessment),
-        phase: 'assessment',
-      };
-    }
-    // Practice mastered, no assessment: mastered() should have been true.
-    throw new Error(`node '${node.id}' mastery state is inconsistent`);
+    const i = model.practiceAttempts(state, node.id) % node.exercises.length;
+    const id = node.exercises[i]!;
+    return {
+      done: false,
+      node,
+      exercise: exerciseById(curriculum, id),
+      phase: 'practice',
+    };
   }
-  return { done: true };
+  if (node.assessment !== undefined) {
+    return {
+      done: false,
+      node,
+      exercise: exerciseById(curriculum, node.assessment),
+      phase: 'assessment',
+    };
+  }
+  // Practice mastered, no assessment: mastered() should have been true.
+  throw new Error(`node '${node.id}' mastery state is inconsistent`);
 }
 
 /** Structural validation of a curriculum: run at load time and in CI. */
@@ -111,6 +127,60 @@ export function validateCurriculum(curriculum: Curriculum): string[] {
     }
     if (n.mastery.n > n.mastery.m || n.mastery.n < 1) {
       problems.push(`node '${n.id}': mastery rule n=${n.mastery.n}, m=${n.mastery.m} is unsatisfiable`);
+    }
+  }
+
+  // Strand tagging, when present, is all-or-nothing per band: a band
+  // that names spiral strands must place every node on one, or the
+  // untagged nodes silently fall off the spiral.
+  if (curriculum.nodes.some((n) => n.strand !== undefined)) {
+    for (const n of curriculum.nodes) {
+      if (n.strand === undefined) {
+        problems.push(`node '${n.id}' has no strand, but the band uses strands`);
+      } else if (n.strand.trim() === '') {
+        problems.push(`node '${n.id}': strand must not be empty`);
+      }
+    }
+  }
+
+  // Day pacing, when present: every active node lives in exactly one
+  // day, day numbers ascend, and the days' concatenated node order is
+  // the band's serving order (so what the learner sees as "today"
+  // matches what the router will actually serve).
+  if (curriculum.days !== undefined) {
+    const seen = new Map<string, number>();
+    let lastDay = 0;
+    for (const day of curriculum.days) {
+      if (day.day <= lastDay) {
+        problems.push(`day ${day.day}: day numbers must ascend (after ${lastDay})`);
+      }
+      lastDay = day.day;
+      if (day.nodes.length === 0) problems.push(`day ${day.day} has no nodes`);
+      for (const id of day.nodes) {
+        const node = curriculum.nodes.find((n) => n.id === id);
+        if (!node) {
+          problems.push(`day ${day.day}: unknown node '${id}'`);
+          continue;
+        }
+        if (node.status !== 'active') {
+          problems.push(`day ${day.day}: node '${id}' is not active`);
+        }
+        if (seen.has(id)) {
+          problems.push(`node '${id}' appears in day ${seen.get(id)} and day ${day.day}`);
+        }
+        seen.set(id, day.day);
+      }
+    }
+    const activeIds = curriculum.nodes
+      .filter((n) => n.status === 'active')
+      .map((n) => n.id);
+    for (const id of activeIds) {
+      if (!seen.has(id)) problems.push(`active node '${id}' belongs to no day`);
+    }
+    const dayOrder = curriculum.days.flatMap((d) => d.nodes);
+    const activeInDayOrder = dayOrder.filter((id) => activeIds.includes(id));
+    if (activeInDayOrder.join(',') !== activeIds.join(',')) {
+      problems.push('day node order does not match the band serving order');
     }
   }
 

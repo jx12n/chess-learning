@@ -56,6 +56,10 @@ body {
   margin-left: 0.4rem;
 }
 
+.day:empty {
+  display: none;
+}
+
 .progress {
   display: flex;
   flex-wrap: wrap;
@@ -140,6 +144,15 @@ body {
   border-color: #7b3fa0;
 }
 
+.phase:empty {
+  display: none;
+}
+
+.phase[data-phase='sandbox'] {
+  color: #b45309;
+  border-color: #b45309;
+}
+
 .puzzle-count {
   display: inline-block;
   font-size: 0.72rem;
@@ -203,6 +216,15 @@ body {
   min-height: 2.4rem;
 }
 
+.actions button {
+  flex: 1;
+  min-width: 0;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  text-align: center;
+  white-space: nowrap;
+}
+
 button {
   font: inherit;
   cursor: pointer;
@@ -221,6 +243,64 @@ button.primary:hover {
   filter: brightness(1.08);
 }
 
+/* Next before the current puzzle is answered: present but inert. */
+button.primary:disabled {
+  background: color-mix(in srgb, var(--accent) 22%, #fff);
+  color: color-mix(in srgb, var(--accent-ink) 45%, transparent);
+  cursor: default;
+}
+
+button.primary:disabled:hover {
+  filter: none;
+}
+
+/* Keep the label above the draining fill on an arming button. */
+button .label {
+  position: relative;
+  z-index: 1;
+}
+
+/* Auto-advance countdown: a solid-green fill recedes right→left over
+ * --advance-ms (set by setActions to match the JS timer), draining to a
+ * pale-green track underneath. The JS timer stays authoritative; this is
+ * purely the visible clock. */
+button.primary.arming {
+  position: relative;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--accent) 32%, #fff);
+}
+
+button.primary.arming::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: var(--accent);
+  transform-origin: right center;
+  animation: drain var(--advance-ms, 1400ms) linear forwards;
+}
+
+@keyframes drain {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+/* Respect reduced-motion: no sweep, but the button still reads as the
+ * primary green and the timer still advances. */
+@media (prefers-reduced-motion: reduce) {
+  button.primary.arming {
+    background: var(--accent);
+  }
+  button.primary.arming::before {
+    animation: none;
+    transform: scaleX(0);
+  }
+}
+
 button.ghost {
   background: transparent;
   color: var(--muted);
@@ -232,6 +312,36 @@ button.ghost {
 button.ghost:hover {
   color: var(--ink);
   border-color: var(--muted);
+}
+
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+a.ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0.45rem 1rem;
+  text-decoration: none;
+}
+
+a.ghost:hover {
+  color: var(--ink);
+  border-color: var(--muted);
+}
+
+.player-chip {
+  font-weight: 600;
+}
+
+.player-chip[hidden] {
+  display: none;
 }
 
 /* ------------------------------- board -------------------------------- */
@@ -367,15 +477,390 @@ button.ghost:hover {
   100% { box-shadow: inset 0 0 0 100vmax rgba(46, 125, 50, 0); }
 }
 
-@keyframes flash-bad {
-  0% { box-shadow: inset 0 0 0 100vmax rgba(198, 40, 40, 0.5); }
-  100% { box-shadow: inset 0 0 0 100vmax rgba(198, 40, 40, 0); }
+/* A gentle gold "look here" pulse — never a red "wrong" buzz. A miss just
+ * points the way; see CLAUDE.md, "being wrong or failing is never wrong". */
+@keyframes flash-hint {
+  0% { box-shadow: inset 0 0 0 100vmax rgba(240, 190, 70, 0.7); }
+  100% { box-shadow: inset 0 0 0 100vmax rgba(240, 190, 70, 0); }
 }
 
 .square.flash-good {
   animation: flash-good 0.9s ease-out;
 }
 
-.square.flash-bad {
-  animation: flash-bad 0.7s ease-out;
+.square.flash-hint {
+  animation: flash-hint 0.9s ease-out;
+}
+
+/* ------------------------- landing (the front door) --------------------- */
+
+.home {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 3rem;
+}
+
+.brand {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 0.5rem;
+}
+
+.brand a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.hero h1 {
+  font-size: clamp(2rem, 5.5vw, 3rem);
+  line-height: 1.12;
+  margin: 0 0 0.6rem;
+}
+
+.hero .lede {
+  font-size: 1.15rem;
+  max-width: 34em;
+  margin: 0;
+}
+
+.mini-lesson {
+  margin: 2.25rem 0 2.5rem;
+}
+
+.kicker-after {
+  font-weight: 600;
+  margin: 0.9rem 0 0;
+  color: var(--accent);
+}
+
+.mini-boards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.75rem;
+}
+
+.mini-board {
+  margin: 0;
+  text-align: center;
+}
+
+.mini-board svg {
+  width: clamp(150px, 26vw, 210px);
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(43, 42, 39, 0.18);
+}
+
+.mini-board figcaption {
+  margin-top: 0.6rem;
+  font-size: 0.95rem;
+  max-width: 15em;
+}
+
+.players-section h2 {
+  font-size: 1.3rem;
+  margin: 0 0 0.9rem;
+}
+
+.players {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.player-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1.15rem 0.9rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  font: inherit;
+  color: var(--ink);
+}
+
+.player-card:hover {
+  border-color: var(--accent);
+}
+
+.player-card .glyph {
+  font-size: 2.7rem;
+  line-height: 1;
+}
+
+.player-card .name {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.player-card .badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  padding: 0.05rem 0.6rem;
+}
+
+.player-card .tag {
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+.player-card.new {
+  border-style: dashed;
+  color: var(--muted);
+}
+
+.new-player {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 1.25rem 1.4rem;
+  max-width: 30rem;
+}
+
+.new-player label,
+.new-player .pick-label {
+  display: block;
+  font-weight: 600;
+  margin: 0 0 0.4rem;
+}
+
+.new-player .pick-label {
+  margin-top: 1rem;
+}
+
+#player-name {
+  font: inherit;
+  font-size: 1.1rem;
+  width: 100%;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg);
+}
+
+.piece-pick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.1rem;
+}
+
+.piece-pick button {
+  font-size: 1.7rem;
+  line-height: 1;
+  width: 3rem;
+  height: 3rem;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.piece-pick button[aria-pressed='true'] {
+  border-color: var(--accent);
+  background: #e8f3e9;
+}
+
+.parent-strip {
+  border-top: 1px solid var(--line);
+  margin-top: 2.75rem;
+  padding-top: 1.4rem;
+  color: var(--muted);
+  font-size: 0.92rem;
+  max-width: 46em;
+}
+
+.parent-strip h2 {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin: 0 0 0.6rem;
+}
+
+.parent-strip p {
+  margin: 0.4rem 0;
+}
+
+.parent-strip a {
+  color: var(--accent);
+}
+
+/* ------------------------------ about page ------------------------------ */
+
+.about {
+  max-width: 44em;
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 3rem;
+}
+
+.about h1 {
+  font-size: clamp(1.7rem, 4.5vw, 2.3rem);
+  line-height: 1.15;
+  margin: 0 0 1rem;
+}
+
+.about h2 {
+  font-size: 1.15rem;
+  margin: 2rem 0 0.5rem;
+}
+
+.day-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0;
+}
+
+.day-list li {
+  padding: 0.35rem 0;
+  border-bottom: 1px dashed var(--line);
+}
+
+.day-list .day-n {
+  display: inline-block;
+  min-width: 3.6em;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.about-cta {
+  margin-top: 2.25rem;
+}
+
+.button-link {
+  display: inline-block;
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-radius: 8px;
+  padding: 0.55rem 1.3rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.button-link:hover {
+  filter: brightness(1.08);
+}
+
+/* --------------------------- developer options ------------------------- */
+/* Backstage drawer: deliberately dark and dense — unmistakably not the
+   kid's UI. Exists in the DOM only when the dev flag is on. */
+
+#dev-panel {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 50;
+  background: #1c1b1a;
+  color: #d6d3cd;
+  font: 12px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+  border-top: 2px solid #b45309;
+  max-height: 45vh;
+  overflow-y: auto;
+}
+
+#dev-panel .dev-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.3rem 0.75rem;
+  position: sticky;
+  top: 0;
+  background: #1c1b1a;
+}
+
+#dev-panel .dev-bar strong {
+  color: #f59e0b;
+  letter-spacing: 0.1em;
+}
+
+#dev-panel .dev-bar #dev-readout {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0.9;
+}
+
+#dev-panel[data-collapsed='true'] .dev-body {
+  display: none;
+}
+
+#dev-panel .dev-body {
+  padding: 0.2rem 0.75rem 0.6rem;
+}
+
+#dev-panel .dev-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem;
+  margin: 0.25rem 0;
+}
+
+#dev-panel .dev-row:empty {
+  display: none;
+}
+
+#dev-panel .dev-label {
+  opacity: 0.55;
+  min-width: 4.5em;
+  text-transform: uppercase;
+  font-size: 10px;
+}
+
+#dev-panel .dev-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border: 1px solid #3a3733;
+  border-radius: 6px;
+  padding: 0.1rem 0.35rem;
+}
+
+#dev-panel button {
+  font: inherit;
+  background: #2a2825;
+  color: #d6d3cd;
+  border: 1px solid #4a463f;
+  border-radius: 5px;
+  padding: 0.1rem 0.5rem;
+  cursor: pointer;
+}
+
+#dev-panel button:hover {
+  border-color: #f59e0b;
+  color: #fff;
+}
+
+#dev-panel button.dev-selected {
+  background: #b45309;
+  border-color: #b45309;
+  color: #fff;
+}
+
+#dev-panel #dev-verify {
+  opacity: 0.75;
+}
+
+#dev-panel #dev-state-json {
+  width: 100%;
+  font: inherit;
+  background: #12110f;
+  color: #d6d3cd;
+  border: 1px solid #4a463f;
+}
+
+#dev-panel #dev-error {
+  color: #f87171;
+}
+
+#dev-panel #dev-error:empty {
+  display: none;
 }
